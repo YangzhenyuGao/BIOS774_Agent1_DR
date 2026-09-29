@@ -1,0 +1,5 @@
+method,trustworthiness,neighbor_recall,silhouette,silhouette_note,k,distance_metric,metric_sample_size,runtime_seconds,status
+pca,0.8544578061433956,0.15126666666666666,-0.10075349347638965,secondary only; unannotated observations excluded; at most 2000 samples,15,euclidean,3000,2.072654731106013,success
+tsne,0.881460090322099,0.2444222222222222,-0.085825614631176,secondary only; unannotated observations excluded; at most 2000 samples,15,euclidean,3000,19.12329928902909,success
+laplacian,0.8429838390624417,0.11920000000000001,-0.14786925985307028,secondary only; unannotated observations excluded; at most 2000 samples,15,euclidean,3000,1.6362546780146658,success
+lle,0.8318187063785317,0.09697777777777777,-0.12073436587349275,secondary only; unannotated observations excluded; at most 2000 samples,15,euclidean,3000,2.541264274623245,success

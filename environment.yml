@@ -1,0 +1,39 @@
+name: agent
+variables:
+  PYTHONNOUSERSITE: "1"
+  LD_LIBRARY_PATH: /proj/yunligrp/users/ygao/conda/envs/agent/lib
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - numpy<3
+  - scipy
+  - pandas<3
+  - scikit-learn
+  - matplotlib
+  - h5py
+  - pango
+  - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cpu
+      - torch==2.14.0+cpu
+      - torchvision==0.29.0+cpu
+      - anndata
+      - scanpy
+      - umap-learn
+      - pydiffmap
+      - medmnist
+      - gpytorch
+      - seaborn
+      - pyyaml
+      - joblib
+      - tqdm
+      - psutil
+      - jinja2
+      - weasyprint
+      - pypdf
+      - openai
+      - pytest
+      - pytest-cov
+      - ruff
+# CPU wheels match the installed baseline; the setup script uses the official CPU-only index.

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "agent1-dr"
+version = "0.1.0"
+description = "Evidence-driven dimensionality reduction for BIOS 774"
+requires-python = ">=3.11"
+dependencies = ["numpy", "pandas", "scipy", "scikit-learn", "anndata", "scanpy", "umap-learn", "pydiffmap", "medmnist", "torch", "gpytorch", "matplotlib", "seaborn", "pyyaml", "joblib", "tqdm", "psutil", "jinja2", "weasyprint", "pypdf", "openai"]
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov", "ruff"]
+[tool.setuptools.packages.find]
+where = ["src"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+[tool.ruff]
+line-length = 110

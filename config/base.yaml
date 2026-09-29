@@ -1,0 +1,18 @@
+project:
+  seed: 774
+  output_root: outputs
+pilot:
+  max_samples: 1000
+  n_repeats_stochastic: 3
+  timeout_minutes_per_run: 30
+  n_neighbors_eval: 15
+selection:
+  retain_pca_baseline: true
+  max_final_methods: 4
+  quality_relative_to_best: 0.90
+  use_labels_for_selection: false
+reporting:
+  mode: deterministic
+  fail_if_llm_requested_but_unavailable: true
+methods:
+  gplvm: {epochs: 300, inducing_points: 32, learning_rate: 0.03, batch_size: 256}

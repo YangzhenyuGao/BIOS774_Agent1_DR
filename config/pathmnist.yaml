@@ -1,0 +1,4 @@
+dataset:
+  name: pathmnist
+  split: train
+  max_final_samples: 3000

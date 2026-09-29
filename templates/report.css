@@ -1,0 +1,15 @@
+@page { size: A4; margin: 17mm; @bottom-right { content: counter(page); font-size: 8pt; color: #555; } }
+body { font-family: DejaVu Sans, sans-serif; font-size: 9pt; line-height: 1.4; color: #172a38; }
+h1 { font-size: 21pt; color: #124d61; margin-bottom: 6pt; }
+h2 { font-size: 13pt; margin-top: 15pt; color: #124d61; }
+h3 { font-size: 10pt; }
+table { border-collapse: collapse; width: 100%; font-size: 7.5pt; margin: 8pt 0; }
+th, td { text-align: left; padding: 4pt; border-bottom: 1px solid #d6dfe3; }
+th { background: #eaf0f2; }
+figure { margin: 12pt 0; break-inside: avoid; }
+img { max-width: 100%; max-height: 180mm; }
+figcaption { font-size: 8pt; color: #475c68; }
+.small { font-size: 7.5pt; overflow-wrap: anywhere; }
+.notice { padding: 9pt; background: #eaf0f2; }
+.page { break-before: page; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 7pt; }

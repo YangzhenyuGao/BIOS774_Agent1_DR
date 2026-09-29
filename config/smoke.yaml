@@ -1,0 +1,15 @@
+project:
+  output_root: outputs/smoke
+dataset:
+  name: synthetic
+  max_final_samples: 90
+  synthetic_samples: 90
+pilot:
+  max_samples: 60
+  n_neighbors_eval: 5
+  n_repeats_stochastic: 2
+  timeout_minutes_per_run: 3
+methods:
+  gplvm: {epochs: 12, inducing_points: 8, batch_size: 60}
+selection:
+  max_final_methods: 2
