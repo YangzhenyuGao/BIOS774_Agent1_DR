@@ -258,8 +258,8 @@
     },
     {
       "path": "templates/project_report.html.j2",
-      "sha256": "7c9a82c1192eb6b49364518196bd9af616e243f6cb4a3a0512ae8fd2ce4f50f5",
-      "bytes": 21551
+      "sha256": "0fd7cc42e90630d30a721da8e461ba76771ebd8d3a37faa684fe96a65a064d9f",
+      "bytes": 22273
     },
     {
       "path": "templates/report.css",
@@ -428,8 +428,8 @@
     },
     {
       "path": "docs/PROGRESS.md",
-      "sha256": "fcf5edbe993192c567bf2da2f97e47e2bc1c401489896f09586edd936876d067",
-      "bytes": 6758
+      "sha256": "55358ee89ef7e37a6fda6cb594cb4a3a8a107bc02a2568b75fc658ae445e7055",
+      "bytes": 8133
     },
     {
       "path": "reports/generated_report_1.pdf",
@@ -443,8 +443,8 @@
     },
     {
       "path": "reports/report.pdf",
-      "sha256": "3b23ce7b0e2a9b68e1931f3b5173793e4d57417c5d8ddf9e40a5ae7119e33077",
-      "bytes": 695326
+      "sha256": "2bca88d060d926db4ae913b63eedda7d8fac9a5f2b419447971c9d1641a61e30",
+      "bytes": 696068
     },
     {
       "path": "reports/source/figures/final_embeddings_both.png",
@@ -458,8 +458,8 @@
     },
     {
       "path": "reports/source/report.html",
-      "sha256": "0f8a4507ec424c2b2d349f9944a9bf9d2ff71ee24c05aa965318b43d79f5ab6e",
-      "bytes": 22456
+      "sha256": "8cd19c4d76e5b8a0e3341c4ee5ad233357f84fd0679192d5a7a009115cf7aa8b",
+      "bytes": 23178
     },
     {
       "path": "examples/pathmnist/dataset_profile.json",
