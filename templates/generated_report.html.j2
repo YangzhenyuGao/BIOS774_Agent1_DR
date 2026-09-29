@@ -1,33 +1,114 @@
-<!doctype html><html><head><meta charset="utf-8"><style>{{ css|safe }}</style></head><body>
-<h1>Evidence-driven dimensionality reduction</h1><h2>{{ name }}</h2>
-<p class="notice">Reporting mode: {{ mode }}. {% if mode == 'deterministic' %}This report is rendered from saved evidence by deterministic templates; no LLM API wrote this report.{% else %}An OpenAI API organized an extractive summary; every returned claim was checked against the supplied evidence.{% endif %}</p>
-<h2>Dataset and declared scope</h2>
-<p>Source: {{ profile.provenance.source|default('Synthetic numerical demonstration (fixed seed)') }}. The inspected source has {{ profile.n_samples }} observations and {{ profile.n_features }} numerical features. Sparsity: {{ '%.4f'|format(profile.statistics.sparsity) }}. The pilot contains {{ pilot_cohort.selected }} observations; the final analysis contains {{ cohort.selected }} of {{ cohort.available_post_qc }} available post-QC observations.</p>
-{% if name == 'pathmnist' %}<p><strong>This is a stratified subset of the {{ profile.provenance.split }} split, not the complete PathMNIST dataset.</strong> Pixels are flattened RGB values; no pretrained neural features are used.</p>{% endif %}
-<p>Class counts in the source: {{ profile.statistics.label_counts }}. Labels control stratified cohort composition and secondary diagnostic plots only. They do not enter preprocessing fits, embeddings, or primary selection.</p>
-<h2>Preprocessing and rationale</h2>
-{% for a in plan.actions %}<p><strong>{{ a.action }}</strong>: {{ a.reason }}. Parameters: {% for key, value in a.parameters.items() %}{% if key != "explained_variance_ratio" %}{{ key }}={{ value }}; {% endif %}{% endfor %}. Fit scope: {{ a.fit_scope }}.</p>{% endfor %}
-<h2>Comparable pilot design</h2>
-<p>Every method was attempted on identical saved input ({{ pilot_cohort.input_shape }}). MDS, GPLVM, t-SNE, and UMAP use repeated seeds; other methods run once. The metric reference is the same common PCA representation. Trustworthiness and mean k-nearest-neighbor recall use Euclidean distance and k={{ k }}; stability is mean pairwise seed neighborhood overlap. Quality = 0.45 trustworthiness + 0.45 neighbor recall + 0.10 stability. Deterministic stability is defined as one. Silhouette is secondary, excludes unannotated cells, and uses at most 2,000 observations.</p>
-<table><thead><tr><th>Method</th><th>Status</th><th>Trust</th><th>Recall</th><th>Stability</th><th>Quality</th><th>Seconds</th></tr></thead><tbody>{% for r in pilot %}<tr><td>{{ r.method }}</td><td>{{ r.status }}</td>{% for key in ['trustworthiness','neighbor_recall','stability','quality','runtime_seconds'] %}<td>{{ '%.3f'|format(r[key]) if r[key] is not none else 'N/A' }}</td>{% endfor %}</tr>{% endfor %}</tbody></table>
-<h2>Prior suitability, empirical decisions, and failures</h2>
-<p>Best pilot quality {{ '%.6f'|format(decisions.best_quality) }}; eligibility threshold {{ '%.6f'|format(decisions.threshold) }}. Retained methods: {{ decisions.selected|join(', ') }}. Low-confidence fallback: {{ decisions.low_confidence }}.</p>
-{% for d in decisions.decisions %}<p><strong>{{ d.method }} — {{ d.decision }}</strong>. Prior: {{ d.prior_suitability }} Evidence and decision: {{ d.reason }}{% if d.pilot_evidence.warnings %} Warnings: {{ d.pilot_evidence.warnings|join('; ') }}{% endif %}</p>{% endfor %}
+<!doctype html><html><head><meta charset="utf-8"><title>Agent 1 report: {{ name }}</title><style>{{ css|safe }}</style></head><body>
+{% set s = profile.statistics %}{% set d = decisions %}{% set sp = size_plan %}
+<header class="title">
+<p class="kicker">BIOS 774 · Agent 1 · evidence-driven dimensionality reduction</p>
+<h1>{{ profile.provenance.source|default('Synthetic numerical demonstration') }}</h1>
+<p class="meta">Dataset <strong>{{ name }}</strong> · run {{ manifest.created_at[:10] }} · job {{ manifest.job_id }} · commit {{ (manifest.git_commit or 'none')[:10] }}</p>
+</header>
+<p class="notice">Reporting mode: {{ mode }}. {% if mode == 'deterministic' %}This report was rendered from saved, validated evidence by deterministic templates; no language model wrote it. Every number below is read from a checksummed artifact in the evidence bundle.{% else %}An OpenAI model organized an extractive summary; every returned sentence was checked against the evidence list.{% endif %}</p>
+
+<h2>At a glance</h2>
+<table class="kv"><tbody>
+<tr><th>Source</th><td>{{ '{:,}'.format(profile.n_samples) }} observations × {{ '{:,}'.format(profile.n_features) }} numerical features{% if cohort.selected < profile.n_samples %}; <strong>the final analysis uses a declared subset ({{ '{:,}'.format(cohort.selected) }} observations), not the complete dataset</strong>{% endif %}</td></tr>
+<tr><th>Preprocessing branch</th><td>{{ plan.branch|replace('_', ' ') }} (chosen from the data profile, not the dataset name)</td></tr>
+<tr><th>Pilot</th><td>{{ '{:,}'.format(pilot_cohort.selected) }} observations; all ten methods; {{ cfg.pilot.n_repeats_stochastic }} seeds for stochastic methods; {{ cfg.pilot.n_subsamples }} refits on {{ (100 * cfg.pilot.subsample_fraction)|round|int }}% subsamples for every method</td></tr>
+<tr><th>Retained</th><td>{% for m in d.selected %}{{ names[m] }}{% if not loop.last %}, {% endif %}{% endfor %}{% if d.low_confidence %} (low-confidence fallback){% endif %}</td></tr>
+<tr><th>Final cohort</th><td>{{ '{:,}'.format(cohort.selected) }} observations; binding constraint: {{ sp.binding_constraint }}</td></tr>
+</tbody></table>
+<h3>Findings</h3>
+<ul class="facts">{% for f in facts %}<li>{{ f }}</li>{% endfor %}</ul>
 {% if summary %}<h3>API-organized validated evidence</h3>{% for sentence in summary.sentences %}<p>{{ sentence }}</p>{% endfor %}{% endif %}
-<h2>Shortlist refinement and final results</h2>
-<p>Only retained methods were tuned on the pilot cohort. The selection metrics are reused, including repeated-seed stability; ties at six decimal places favor lower runtime and then grid order. These are in-cohort descriptive metrics, not held-out generalization estimates.</p>
-<table><thead><tr><th>Method</th><th>Grid</th><th>Status</th><th>Quality</th><th>Seconds</th></tr></thead><tbody>{% for r in tuning %}<tr><td>{{ r.method }}</td><td>{{ r.grid_index }}</td><td>{{ r.status }}</td><td>{{ '%.3f'|format(r.quality) if r.quality is not none else 'N/A' }}</td><td>{{ '%.2f'|format(r.runtime_seconds) }}</td></tr>{% endfor %}</tbody></table>
-<p class="small">Final cohort planning: {{ cohort.size_justification }}.</p>
-<table><thead><tr><th>Method</th><th>Trustworthiness</th><th>Neighbor recall</th><th>Silhouette (secondary)</th><th>Seconds</th></tr></thead><tbody>{% for r in final %}<tr><td>{{ r.method }}</td><td>{{ '%.3f'|format(r.trustworthiness) }}</td><td>{{ '%.3f'|format(r.neighbor_recall) }}</td><td>{{ '%.3f'|format(r.silhouette) if r.silhouette is not none else 'N/A' }}</td><td>{{ '%.2f'|format(r.runtime_seconds) }}</td></tr>{% endfor %}</tbody></table>
-<h2>Interpretation and limitations</h2>
-{% set top_trust = final|max(attribute='trustworthiness') %}{% set top_recall = final|max(attribute='neighbor_recall') %}
-<p>On this final cohort, {{ top_trust.method }} has the highest observed trustworthiness ({{ '%.3f'|format(top_trust.trustworthiness) }}), while {{ top_recall.method }} has the highest neighbor recall ({{ '%.3f'|format(top_recall.neighbor_recall) }}). The first two PCA components explain {{ '%.1f'|format(100*(cohort.pca_explained_variance_ratio[0]+cohort.pca_explained_variance_ratio[1])) }}% of variance in the preprocessed feature space. These diagnostics describe different aspects of the embedding and need not identify the same method as best.</p>
-<p>The shortlist reflects measured preservation of local geometry in the declared input representation under the specified compute budget. It does not establish a universally superior method. Changes in preprocessing, cohort composition, neighborhood scale, or objective weights can change the ranking. Linear PCA remains an interpretable baseline. Disconnected graphs and numerical warnings are retained in the evidence and affect eligibility.</p>
-<p>GPLVM uses actual variational optimization with latent uncertainty and inducing GP variables. Its fixed budget does not prove convergence; loss history and latent displacement are saved. Successful-run runtime includes method imports, input loading and fitting, but excludes subprocess startup and common imports. Cold caches and hardware can affect timing. A conservative cubic bound informs PathMNIST cohort planning but is not a fitted complexity model. Biological and histological labels are diagnostics, not validation of causal or biological mechanisms. PBMC annotations derive from a prior processed clustering and are not independent ground truth.</p>
-<h2>Figures</h2>{% for f in figures %}<figure><img src="{{ f.path }}"><figcaption>{{ f.caption }}</figcaption></figure>{% endfor %}
-<h2>Reproducibility and sources</h2>
-<p class="small">Configuration SHA256: {{ manifest.config_hash }}<br>Code SHA256: {{ manifest.code_hash }}<br>Git commit: {{ manifest.git_commit }}<br>Job: {{ manifest.job_id }}; host: {{ manifest.hostname }}; timestamp: {{ manifest.created_at }}.</p>
-<p class="small">Software: {{ manifest.package_versions }}</p>
-<p class="small">Source provenance: {{ profile.provenance }}</p>
-<p>References: Scanpy PBMC3k dataset documentation; 10x Genomics PBMC3k. Yang et al., MedMNIST v2, Scientific Data (2023), doi:10.1038/s41597-022-01721-8. Titsias and Lawrence, Bayesian Gaussian Process Latent Variable Model, AISTATS (2010). GPyTorch GPLVM SVI tutorial. Full method and source links are in docs/METHOD_NOTES.md and docs/DATA_PROVENANCE.md.</p>
+
+<h2>1 · Dataset inspection</h2>
+<table class="kv"><tbody>
+<tr><th>Storage</th><td>{{ s.dtype }}; sparsity {{ '%.4f'|format(s.sparsity) }}; values in [{{ s.min_value|fmt }}, {{ s.max_value|fmt }}]; non-negative: {{ s.nonnegative }}; integer-valued: {{ s.integer_valued }}</td></tr>
+<tr><th>Features</th><td>{{ s.constant_features }} constant, {{ s.duplicate_features }} duplicated; feature variance min/median/max {{ s.feature_variance_quantiles|fmt }}; mitochondrial (MT-) features: {{ s.mitochondrial_features }}</td></tr>
+<tr><th>Observation totals</th><td>row sums min/median/max {{ s.row_sum_quantiles|fmt }}</td></tr>
+<tr><th>Memory</th><td>dense float64 {{ '%.0f'|format(s.dense_float64_mb) }} MB; full pairwise matrix {{ '%.0f'|format(s.pairwise_float64_mb) }} MB (never materialized by the evaluation code)</td></tr>
+<tr><th>Secondary labels</th><td>{% for k, v in s.label_counts.items() %}{{ k }} {{ '{:,}'.format(v) }}{% if not loop.last %} · {% endif %}{% endfor %}</td></tr>
+</tbody></table>
+<p class="small">Labels only stratify cohort composition and color secondary plots. They never enter preprocessing fits, embeddings or selection.</p>
+
+<h2>2 · Preprocessing plan and rationale</h2>
+<p>Rule evidence: sparsity {{ '%.3f'|format(plan.rule_evidence.sparsity) }}, non-negative {{ plan.rule_evidence.nonnegative }}, integer-valued {{ plan.rule_evidence.integer_valued }}, {{ '{:,}'.format(plan.rule_evidence.n_features) }} features → branch <strong>{{ plan.branch|replace('_', ' ') }}</strong>. The same plan is re-fitted inside each cohort (pilot and final).</p>
+<table><thead><tr><th>Step</th><th>Parameters (final cohort)</th><th>Reason</th><th>Fit scope</th></tr></thead><tbody>
+{% for a in plan.actions %}<tr><td>{{ a.action|replace('_', ' ') }}</td><td class="small">{{ a.parameters|params }}</td><td>{{ a.reason }}</td><td>{{ a.fit_scope }}</td></tr>{% endfor %}
+</tbody></table>
+
+<h2>3 · Comparable pilot design</h2>
+<p>Every method was fitted to the identical saved input ({{ '{:,}'.format(pilot_cohort.input_shape[0]) }} × {{ pilot_cohort.input_shape[1] }}; SHA-256 {{ pilot_cohort.input_sha256[:12] }}…). Stochastic methods (MDS, GPLVM, t-SNE, UMAP) use {{ cfg.pilot.n_repeats_stochastic }} seeds. Every method is also refitted on the same {{ cfg.pilot.n_subsamples }} random {{ (100 * cfg.pilot.subsample_fraction)|round|int }}% subsamples. Metrics use Euclidean distance in the common input space:</p>
+<ul class="small">
+<li><strong>T</strong>: trustworthiness at k = {{ cfg.pilot.n_neighbors_eval }} (scikit-learn definition).</li>
+<li><strong>R</strong>: mean k-nearest-neighbor recall, self excluded, stable tie order.</li>
+<li><strong>G</strong>: Spearman correlation of pairwise distances (all pairs up to 500,000, otherwise a fixed random sample), clipped at 0.</li>
+<li><strong>S</strong>: mean kNN overlap of subsample refits on their shared observations.</li>
+</ul>
+<p><strong>Quality Q = {{ d.quality_formula|replace('*', ' ')|replace('_', ' ') }}</strong>. The weights and all thresholds were fixed before the real-data run (docs/METHOD_NOTES.md). Runtime is fit_transform time only; imports and JIT warm-up are recorded separately.</p>
+<p>Severe diagnostics make a method ineligible: disconnected-graph or singular warnings; a collapsed layout (median collapse ratio &lt; {{ cfg.selection.collapse_absolute }} and &lt; {{ cfg.selection.collapse_relative }} × PCA's); a diffusion Markov spectral gap &lt; {{ '%.0e'|format(cfg.selection.spectral_gap_min) }}; SMACOF reaching max_iter.</p>
+
+<h2>4 · Pilot results</h2>
+<table><thead><tr><th>Method</th><th>Status</th><th>T</th><th>R</th><th>G</th><th>S</th><th>Seed S</th><th>Q</th><th>Fit s</th><th>Collapse</th><th>Flags</th></tr></thead><tbody>
+{% for r in pilot %}<tr class="{{ 'retained' if r.method in d.selected else '' }}"><td>{{ names[r.method] }}</td><td>{{ r.status }}</td>{% for key in ['trustworthiness','neighbor_recall','global_structure','stability','seed_stability','quality'] %}<td>{{ '%.3f'|format(r[key]) if r[key] is not none else '–' }}</td>{% endfor %}<td>{{ '%.2f'|format(r.runtime_seconds) }}</td><td>{{ '%.2f'|format(r.collapse_ratio) if r.collapse_ratio is not none else '–' }}</td><td class="small">{{ r.severe_reasons|join('; ') if r.severe_reasons else ('seed-invariant' if r.seed_invariant else '') }}</td></tr>{% endfor %}
+</tbody></table>
+<p class="small">Highlighted rows were retained. Fit s is the mean fit_transform wall time on the full pilot cohort. Seed S is the overlap between repeated seeds on the same cohort; it is shown for stochastic methods only.</p>
+{% for key in ['pilot_embeddings', 'pilot_metrics', 'runtime_quality', 'stability'] %}{% set f = figures[key] %}<figure><img src="{{ f.path }}"><figcaption>{{ f.caption }}</figcaption></figure>{% endfor %}
+
+<h2>5 · Evidence-based selection</h2>
+<p>Best valid pilot quality is {{ '%.4f'|format(d.best_quality) }} ({{ names[d.best_method] }}); the 90% threshold is {{ '%.4f'|format(d.threshold) }}.</p>
+<p>A method is eligible if it meets that threshold, lies within the practical-equivalence margin of the best, or sits on the ε-Pareto frontier. The margin is max(2 × paired subsample SE, {{ cfg.selection.equivalence_floor }}). On the ε-Pareto frontier, a runtime difference counts only when it is ≥ {{ cfg.selection.runtime_material_ratio|fmt }}× and ≥ {{ cfg.selection.runtime_material_seconds|fmt }} s.</p>
+<p>PCA is retained as the linear baseline, with at most {{ cfg.selection.max_final_methods }} candidates in total.</p>
+<table><thead><tr><th>Method</th><th>Prior (not evidence)</th><th>Decision</th><th>Measured reason</th></tr></thead><tbody>
+{% for x in d.decisions %}<tr class="{{ 'retained' if x.decision == 'retain' else '' }}"><td>{{ names[x.method] }}</td><td class="small">{{ x.prior_suitability }}</td><td>{{ x.decision }}</td><td class="small">{{ x.reason }}</td></tr>{% endfor %}
+</tbody></table>
+<h3>Robustness of the shortlist</h3>
+<p>Each row below re-runs the same selection mechanics under one rule change on the same saved evidence; only the first row determined the analysis.</p>
+<table><thead><tr><th>Rule variant</th><th>Shortlist</th></tr></thead><tbody>
+{% for v in d.sensitivity.variants %}<tr><td>{{ v.variant }}</td><td>{% for m in v.selected %}{{ names[m] }}{% if not loop.last %}, {% endif %}{% endfor %}</td></tr>{% endfor %}
+</tbody></table>
+<p class="small">Selection frequency across variants: {% for m, f in d.sensitivity.selection_frequency.items() %}{{ names[m] }} {{ (100 * f)|round|int }}%{% if not loop.last %} · {% endif %}{% endfor %}.</p>
+<h3>From the v1 rules to the pre-registered v2 rules</h3>
+<p>This cumulative ablation is computed on the same evidence; each step changes one rule.</p>
+<table><thead><tr><th>Step</th><th>Shortlist</th></tr></thead><tbody>
+{% for a in d.ablation %}<tr><td>{{ a.step }}</td><td>{% for m in a.selected %}{{ names[m] }}{% if not loop.last %}, {% endif %}{% endfor %}</td></tr>{% endfor %}
+</tbody></table>
+{% set f = figures['sensitivity'] %}<figure><img src="{{ f.path }}" class="narrow"><figcaption>{{ f.caption }}</figcaption></figure>
+
+<h2>6 · Shortlist refinement</h2>
+<p>Only retained methods were tuned. Each grid point was evaluated with the same seeds, subsamples and quality as the pilot. A non-default point replaces the default only if it gains more than the paired equivalence margin.</p>
+<table><thead><tr><th>Method</th><th>Grid</th><th>Changed parameters</th><th>Status</th><th>Q</th><th>S</th><th>Fit s</th></tr></thead><tbody>
+{% for r in tuning %}<tr class="{{ 'retained' if tuning_decisions[r.method].grid_index == r.grid_index else '' }}"><td>{{ names[r.method] }}</td><td>{{ r.grid_index }}</td><td class="small">{{ r.changed|params if r.changed else 'default' }}</td><td>{{ r.status }}{% if r.severe_reasons %} (severe){% endif %}</td><td>{{ '%.3f'|format(r.quality) if r.quality is not none else '–' }}</td><td>{{ '%.3f'|format(r.stability) if r.stability is not none else '–' }}</td><td>{{ '%.2f'|format(r.runtime_seconds) }}</td></tr>{% endfor %}
+</tbody></table>
+<ul class="small">{% for m, x in tuning_decisions.items() %}<li><strong>{{ names[m] }}</strong>: {{ x.reason }}.</li>{% endfor %}</ul>
+
+<h2>7 · Final cohort size</h2>
+<p>Shortlisted methods were fitted on stratified probe cohorts of {{ sp.probe_sizes|join(', ') }} observations. Log-log slopes (floored at 1) projected their cost at each candidate size, with a {{ cfg.final.safety_factor|fmt }}× safety factor. The limits were: per-run timeout {{ cfg.pilot.timeout_minutes_per_run|fmt }} min, final-stage budget {{ cfg.final.time_budget_minutes|fmt }} min, memory {{ cfg.final.memory_budget_gb|fmt }} GB.</p>
+<p><strong>Declared final size: {{ '{:,}'.format(sp.declared_final_size) }}</strong> of {{ '{:,}'.format(sp.available_observations) }} available observations (cap {{ '{:,}'.format(sp.configured_cap) }}); binding constraint: {{ sp.binding_constraint }}.</p>
+<table><thead><tr><th>Method</th><th>Time exponent</th><th>Memory exponent</th><th>Measured at n={{ '{:,}'.format(sp.probe_sizes[-1]) }}</th><th>Projected at declared n</th></tr></thead><tbody>
+{% set chosen_proj = (sp.projections|selectattr('n', 'equalto', sp.declared_final_size)|list)[0] %}
+{% for m, x in sp.scaling_model.items() %}<tr><td>{{ names[m] }}</td><td>{{ '%.2f'|format(x.time_exponent) }}</td><td>{{ '%.2f'|format(x.memory_exponent) }}</td><td>{{ '%.2f'|format(x.anchor_seconds) }} s · {{ '%.0f'|format(x.anchor_memory_mb) }} MB</td><td>{{ '%.1f'|format(chosen_proj.per_method[m].seconds) }} s · {{ '%.0f'|format(chosen_proj.per_method[m].memory_mb) }} MB</td></tr>{% endfor %}
+</tbody></table>
+{% set f = figures['scaling'] %}<figure><img src="{{ f.path }}"><figcaption>{{ f.caption }}</figcaption></figure>
+
+<h2>8 · Final results</h2>
+<table><thead><tr><th>Method</th><th>T</th><th>R</th><th>G</th><th>T (k={{ cfg.pilot.n_neighbors_secondary }})</th><th>R (k={{ cfg.pilot.n_neighbors_secondary }})</th><th>Collapse</th><th>Silhouette (secondary)</th><th>Fit s</th></tr></thead><tbody>
+{% for r in final %}<tr><td>{{ names[r.method] }}</td>{% for key in ['trustworthiness','neighbor_recall','global_structure','trustworthiness_k2','neighbor_recall_k2','collapse_ratio'] %}<td>{{ '%.3f'|format(r[key]) }}</td>{% endfor %}<td>{{ '%.3f'|format(r.silhouette) if r.silhouette is not none else '–' }}</td><td>{{ '%.2f'|format(r.runtime_seconds) }}</td></tr>{% endfor %}
+</tbody></table>
+<p class="small">Final metrics are in-cohort descriptions of the declared final cohort. They are not held-out estimates and should not be compared with pilot values as if the observation sets were identical. Chosen parameters: {% for m, p in chosen.items() %}{{ names[m] }} ({{ p|params }}){% if not loop.last %}; {% endif %}{% endfor %}.</p>
+{% set f = figures['final_embeddings'] %}<figure><img src="{{ f.path }}"><figcaption>{{ f.caption }}</figcaption></figure>
+{% set f = figures['pca_variance'] %}<figure><img src="{{ f.path }}" class="narrow"><figcaption>{{ f.caption }}</figcaption></figure>
+
+<h2>9 · Limitations</h2>
+<ul class="small">
+<li>Q is one pre-registered weighting of label-free criteria. The robustness table shows which conclusions survive other reasonable weightings; no weighting establishes a universally superior method.</li>
+<li>The collapse and spectral-gap checks are conservative and catch only extreme failures. A layout can still be visually degenerate above the thresholds.</li>
+<li>Runtimes are single-threaded CPU measurements on one node, and material-difference tolerances absorb run-to-run noise. The size projections are conservative planning envelopes, not fitted complexity laws.</li>
+<li>GPLVM uses a fixed epoch budget (loss plateau recorded), not a convergence proof.</li>
+<li>PBMC annotations come from a prior clustering, and PathMNIST pixel distances need not reflect histological semantics. Class colors and silhouettes are secondary diagnostics, not validation.</li>
+</ul>
+
+<h2>10 · Reproducibility</h2>
+<p class="small">Configuration SHA-256 {{ manifest.config_hash }} · code SHA-256 {{ manifest.code_hash }} · git commit {{ manifest.git_commit }} · job {{ manifest.job_id }} on {{ manifest.hostname }} · {{ manifest.created_at }}.</p>
+<p class="small">Software: {% for k, v in manifest.package_versions.items() %}{{ k }} {{ v }}{% if not loop.last %} · {% endif %}{% endfor %}.</p>
+<p class="small">Source: {{ profile.provenance.url|default('synthetic') }}{% if profile.provenance.license %} · license {{ profile.provenance.license }}{% endif %}{% if profile.provenance.access_date %} · accessed {{ profile.provenance.access_date }}{% endif %}. Cached file checksums: {% for k, v in (profile.provenance.files or {}).items() %}{{ k }} {{ v[:12] }}…{% if not loop.last %}; {% endif %}{% endfor %}</p>
+<p class="small">References: Scanpy PBMC3k documentation and 10x Genomics PBMC3k; Yang et al., MedMNIST v2, Scientific Data 10:41 (2023); Titsias &amp; Lawrence, Bayesian GPLVM, AISTATS (2010); van der Maaten &amp; Hinton, t-SNE, JMLR (2008); McInnes et al., UMAP (2018); Coifman &amp; Lafon, Diffusion maps (2006); Venna &amp; Kaski, trustworthiness (2001). Full links: docs/METHOD_NOTES.md and docs/DATA_PROVENANCE.md.</p>
 </body></html>

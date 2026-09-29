@@ -11,4 +11,5 @@ class Method(SklearnMethod):
         return {"n_neighbors": 20, "reg": 0.001, "eigen_solver": "arpack", "n_jobs": 1}
 
     def tuning_grid(self, X):
-        return [dict(self.default_params(X), n_neighbors=k) for k in [20, 10, 30]]
+        default = self.default_params(X)
+        return [dict(default, n_neighbors=k) for k in [20, 10, 30]] + [dict(default, reg=0.01)]

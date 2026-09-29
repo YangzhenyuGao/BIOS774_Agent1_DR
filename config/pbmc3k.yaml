@@ -1,3 +1,5 @@
 dataset:
   name: pbmc3k
   max_final_samples: 3000
+reporting:
+  report_name: generated_report_1

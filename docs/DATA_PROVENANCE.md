@@ -14,7 +14,7 @@ PBMC transformation details and fitted scope are serialized separately for the p
 
 ## PathMNIST
 
-Use official `medmnist.PathMNIST(size=28, split='train')`; preserve nine-class mapping from package `INFO`. Numerical input is RGB pixels (uint8 flattened for inspection, float divided by 255 for analysis), followed by cohort-fitted PCA. No pretrained model features. The `.npz` download contains source splits; the base analysis uses only the declared training split. Pilot and final are explicitly stratified subsets.
+Use official `medmnist.PathMNIST(size=28, split='train')`; preserve nine-class mapping from package `INFO`. Numerical input is RGB pixels (uint8 flattened for inspection, float divided by 255 for analysis), followed by cohort-fitted PCA. The planner selects this branch from the profile (dense, non-negative integers with maximum 255), not from the dataset name. No pretrained model features are used. The `.npz` download contains source splits; the base analysis uses only the declared training split. Pilot (1,000) and final cohorts are explicitly stratified subsets. The final size is declared by the scaling rule in METHOD_NOTES.md, with a cap of 20,000 of the 89,996 training images, and is never the complete dataset.
 
 - Official distribution and overview: https://medmnist.com/
 - Package/source: https://github.com/MedMNIST/MedMNIST

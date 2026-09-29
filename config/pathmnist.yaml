@@ -1,4 +1,7 @@
 dataset:
   name: pathmnist
   split: train
-  max_final_samples: 3000
+  # Upper bound only; the final stage chooses the size from measured scaling and budgets.
+  max_final_samples: 20000
+reporting:
+  report_name: generated_report_2

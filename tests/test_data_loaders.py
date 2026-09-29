@@ -16,15 +16,19 @@ def test_alignment():
         align_labels(["a", "z"], a)
 
 
-def test_cohort_metadata_roundtrip_without_pickle(tmp_path, monkeypatch):
+def test_cohort_metadata_roundtrip_without_pickle(tmp_path):
+    from dataclasses import asdict
+
     from agent1_dr import pilot
+    from agent1_dr.inspector import inspect_data
 
     cfg = Config()
     data = load_data(cfg)
     labels = pd.Series(data[1], dtype=object).to_numpy()
     ids = pd.Series(data[2], dtype=object).to_numpy()
-    monkeypatch.setattr(pilot, "load_data", lambda _: (data[0], labels, ids, *data[3:]))
-    _, expected_labels, expected_ids = pilot.prepare_cohort(cfg, tmp_path, 30)
+    objects = (data[0], labels, ids, *data[3:])
+    profile = asdict(inspect_data("synthetic", data[0], labels, {}, None))
+    _, expected_labels, expected_ids = pilot.prepare_cohort(cfg, tmp_path, 30, objects, profile)
     for name, expected in [("labels", expected_labels), ("ids", expected_ids)]:
         saved = np.load(tmp_path / f"{name}.npy", allow_pickle=False)
         assert saved.dtype.kind == "U"

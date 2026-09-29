@@ -890,32 +890,24 @@ Do not jump directly to attractive UMAP/t-SNE figures. The main scientific deliv
 
 ---
 
-## 20. Implemented execution entry points
+## 20. Implemented execution entry points (v2)
 
-The original implementation contract above is preserved. Execution progress, tests and actual job IDs are in `docs/PROGRESS.md`; the existence of source files does not imply a completed benchmark.
+Sections 1–19 above are the original implementation contract and are preserved unchanged. The implemented decision rules, weights and thresholds are in `docs/METHOD_NOTES.md`; the handoff history is in `docs/PROGRESS.md`.
 
 ```bash
 cd /proj/yunligrp/users/ygao/BIOS774Agent/Agent1_DR
-export PYTHONNOUSERSITE=1
-export LD_LIBRARY_PATH=/proj/yunligrp/users/ygao/conda/envs/agent/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-bash scripts/00_preflight.sh
-bash scripts/01_setup_environment.sh
-sbatch scripts/slurm/smoke.sbatch
-# Only after smoke and dry-run acceptance:
-sbatch scripts/slurm/run_all.sbatch config/pbmc3k.yaml
+bash scripts/01_setup_environment.sh              # once; never deletes the agent environment
+sbatch scripts/slurm/smoke.sbatch                 # tests + lint + fresh synthetic run; writes the smoke gate
+sbatch scripts/slurm/run_all.sbatch config/pbmc3k.yaml      # requires the current-code smoke gate
 sbatch scripts/slurm/run_all.sbatch config/pathmnist.yaml
-# Once both runs finish, within a compute allocation:
-/proj/yunligrp/users/ygao/conda/envs/agent/bin/python -m agent1_dr project-report
-/proj/yunligrp/users/ygao/conda/envs/agent/bin/python -m agent1_dr validate --config config/pbmc3k.yaml --all-reports
-/proj/yunligrp/users/ygao/conda/envs/agent/bin/python -m agent1_dr validate --config config/pathmnist.yaml --all-reports
+sbatch scripts/slurm/freeze.sbatch                # validate both datasets, checksum and lock the evidence
+sbatch scripts/slurm/project_report.sbatch        # render reports/report.pdf from the frozen evidence
 ```
 
-The individual stage commands in Section 4 are implemented. Valid stage outputs are reused by default; `--resume` makes that intention explicit. `--force` recomputes the requested stage. Code/config changes invalidate affected cached workflow provenance. Do not run multiple writers against the same dataset output directory simultaneously. Synthetic tests use fresh temporary output directories.
+Stage commands (`inspect`, `pilot`, `select`, `tune`, `final`, `report`, `validate`, `run-all`) accept `--config`. Valid outputs are reused by default; `--force` recomputes a stage. Method fits are cached by method, seed, parameters, input checksum and the hash of the fit code, so report-only changes do not refit methods. Do not run two writers on one dataset output directory.
 
-`project-report` creates the combined four-page report and submission checksum manifest after both dataset reports validate. Review the HTML companions or edit the Jinja templates to review scientific wording. Generated reports default to deterministic mode. Optional `reporting.mode: openai` uses exact evidence extraction/organization, not unchecked free-form claims; missing credentials or a rejected claim fails explicitly.
+Outputs: `outputs/<dataset>/` holds inspection, pilot (all ten methods, repeated seeds, subsample refits, figures), selection (decisions, sensitivity, ablation), tuning, final (scaling probe, declared cohort, embeddings, figures), the evidence bundle and `validation_results.json`. Deliverables are `reports/generated_report_1.pdf` (PBMC3k), `reports/generated_report_2.pdf` (PathMNIST) and `reports/report.pdf` (project report; editable narrative in `templates/project_report.html.j2`). Small Git-friendly snapshots of the frozen evidence live in `examples/`. Archived v1 outputs are in `outputs/archive/v1/` (not in Git).
 
-For environment reconstruction on Linux x86-64, `environment.conda-explicit.txt` pins compiled packages and `environment.lock.txt` pins pip packages. The setup script installs CPU PyTorch/torchvision from the official CPU wheel index. No environment, raw datasets or caches are committed; small output snapshots live in `examples/` after the submission audit. No GitHub push or license selection is performed.
+New numerical datasets: set `dataset.name: numeric` and `dataset.path` to a CSV (optional `label_column`, `id_column`) or NPZ (`X`, optional `labels`, `ids`, `feature_names`). The planner chooses the preprocessing branch from the inspected profile (count matrix, bounded intensity, or continuous). Labels are optional and never used for fitting or selection.
 
-To analyze a new numerical dataset, set `dataset.name: numeric` and `dataset.path` to a CSV or NPZ file. An NPZ must contain `X` and may contain string `labels` and `ids`; a CSV may specify `dataset.label_column` and `dataset.id_column`. Those metadata columns are removed before fitting. Unlabeled inputs are supported. Numerical feature standardization and a common PCA representation are fitted within each cohort; non-finite inputs fail with an explicit policy error. Outputs go to `outputs/numeric/` including its dataset PDF.
-
-After intentionally changing dependency versions, rerun the environment/smoke checks and use `--force` to regenerate numerical results. The saved manifests retain the versions that produced each result. For exact reconstruction, create the compiled foundation with `conda create -p <prefix> --file environment.conda-explicit.txt`, then run that environment's Python with `PYTHONNOUSERSITE=1` to install `-r environment.lock.txt` from this project directory. Prioritize `<prefix>/lib` in `LD_LIBRARY_PATH` when running. The checked-in setup and SLURM scripts apply these settings automatically for the required prefix.
+Environment reconstruction on Linux x86-64: `conda create -p <prefix> --file environment.conda-explicit.txt`, then install `-r environment.lock.txt` with that environment's Python and `PYTHONNOUSERSITE=1`; put `<prefix>/lib` first in `LD_LIBRARY_PATH`. The SLURM scripts apply these settings through `scripts/slurm/common.sh`. No environment, data, outputs or credentials are committed; no license has been selected and nothing has been pushed.

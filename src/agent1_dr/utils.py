@@ -82,6 +82,19 @@ def code_hash():
     return h.hexdigest()
 
 
+def fit_code_hash():
+    """Hash of the code that can change a fitted embedding (method wrappers and worker)."""
+    h = hashlib.sha256()
+    package = ROOT / "src/agent1_dr"
+    files = sorted((package / "methods").glob("*.py")) + [
+        package / name for name in ("worker.py", "registry.py", "schemas.py")
+    ]
+    for p in files:
+        h.update(str(p.relative_to(ROOT)).encode())
+        h.update(p.read_bytes())
+    return h.hexdigest()
+
+
 def manifest(stage, cfg, paths):
     commit = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=False
@@ -107,6 +120,7 @@ def complete(stage, cfg, directory):
         if p.is_file()
         and p.name not in {"stage_manifest.json", "pilot_complete.flag"}
         and not p.name.endswith(".tmp")
+        and not p.name.startswith(".")
     ]
     write_json(directory / "stage_manifest.json", manifest(stage, cfg, files))
 

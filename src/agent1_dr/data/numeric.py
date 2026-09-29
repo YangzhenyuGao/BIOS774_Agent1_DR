@@ -16,6 +16,7 @@ def load(cfg):
             X = data["X"]
             labels = data["labels"].astype(str) if "labels" in data else None
             ids = data["ids"].astype(str) if "ids" in data else np.arange(len(X)).astype(str)
+            names = data["feature_names"].astype(str) if "feature_names" in data else None
     elif path.suffix == ".csv":
         frame = pd.read_csv(path)
         labels = (
@@ -26,6 +27,7 @@ def load(cfg):
             if cfg.dataset.id_column
             else np.arange(len(frame)).astype(str)
         )
+        names = frame.columns.astype(str).to_numpy()
         X = frame.to_numpy(dtype=float)
     else:
         raise ValueError("Numerical input must be .npz (X, optional labels/ids) or numerical .csv")
@@ -39,4 +41,4 @@ def load(cfg):
         "sha256": checksum(path),
         "labels_available": labels is not None,
     }
-    return X, labels, ids, provenance, None
+    return X, labels, ids, provenance, names

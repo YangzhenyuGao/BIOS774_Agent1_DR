@@ -6,13 +6,35 @@ pilot:
   n_repeats_stochastic: 3
   timeout_minutes_per_run: 30
   n_neighbors_eval: 15
+  n_neighbors_secondary: 50
+  # Stability under observation resampling: refits on 5 random 80% subsamples of the pilot.
+  n_subsamples: 5
+  subsample_fraction: 0.8
 selection:
   retain_pca_baseline: true
   max_final_methods: 4
   quality_relative_to_best: 0.90
   use_labels_for_selection: false
+  # Pre-registered before the v2 real-data runs (docs/METHOD_NOTES.md).
+  weight_trustworthiness: 0.35
+  weight_recall: 0.35
+  weight_global: 0.20
+  weight_stability: 0.10
+  equivalence_floor: 0.005
+  runtime_material_ratio: 2.0
+  runtime_material_seconds: 1.0
+  collapse_absolute: 0.05
+  collapse_relative: 0.25
+  spectral_gap_min: 1.0e-6
+final:
+  probe_sizes: [500, 1000, 2000, 4000]
+  size_ladder: [1000, 2000, 3000, 4000, 5000, 7500, 10000, 12500, 15000, 20000]
+  time_budget_minutes: 40
+  memory_budget_gb: 24
+  safety_factor: 2.0
 reporting:
   mode: deterministic
   fail_if_llm_requested_but_unavailable: true
 methods:
-  gplvm: {epochs: 300, inducing_points: 32, learning_rate: 0.03, batch_size: 256}
+  # 75 epochs = 300 minibatch steps at n = 1000 (v1 budget), scaling with cohort size.
+  gplvm: {epochs: 75, inducing_points: 32, learning_rate: 0.03, batch_size: 256}

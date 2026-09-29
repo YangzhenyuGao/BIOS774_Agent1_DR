@@ -1,0 +1,341 @@
+{
+  "pbmc3k": {
+    "delivered_v1": [
+      "pca",
+      "tsne",
+      "isomap",
+      "laplacian"
+    ],
+    "sanity_reproduces_v1": true,
+    "max_abs_diff_trust_vs_v1": 0.0,
+    "max_abs_diff_recall_vs_v1": 0.0,
+    "steps": [
+      {
+        "step": "O0 v1 rules as delivered (sanity check)",
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "step": "O1 + runtime materiality (epsilon-Pareto)",
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap"
+        ]
+      },
+      {
+        "step": "O2 + collapse / spectral-gap / convergence checks",
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap"
+        ]
+      },
+      {
+        "step": "O3 + global-structure component (v2 weights, v1 stability)",
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap"
+        ]
+      },
+      {
+        "step": "O4 runtime ignored entirely",
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap"
+        ]
+      }
+    ],
+    "methods": {
+      "pca": {
+        "trustworthiness": 0.7676714431934493,
+        "neighbor_recall": 0.09019999999999999,
+        "global_structure": 0.6769099304619661,
+        "neighbor_recall_k2": 0.2255,
+        "collapse_ratio": 0.2727058069065468,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": []
+      },
+      "kernel_pca": {
+        "trustworthiness": 0.7157452064141931,
+        "neighbor_recall": 0.069,
+        "global_structure": 0.5693109866244231,
+        "neighbor_recall_k2": 0.17234,
+        "collapse_ratio": 0.47414589591132184,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": []
+      },
+      "mds": {
+        "trustworthiness": 0.7650924599112932,
+        "neighbor_recall": 0.0969111111111111,
+        "global_structure": 0.8329664468839537,
+        "neighbor_recall_k2": 0.24172666666666667,
+        "collapse_ratio": 0.27805339440120463,
+        "stability_v1": 0.27066666666666667,
+        "seed_stability": 0.27066666666666667,
+        "seed_invariant": false,
+        "severe_reasons": [
+          "SMACOF stopped at max_iter=300"
+        ]
+      },
+      "isomap": {
+        "trustworthiness": 0.7866979870351416,
+        "neighbor_recall": 0.10513333333333333,
+        "global_structure": 0.6800737892589097,
+        "neighbor_recall_k2": 0.23016,
+        "collapse_ratio": 0.15985416962245158,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": []
+      },
+      "lle": {
+        "trustworthiness": 0.7295918799044694,
+        "neighbor_recall": 0.0768,
+        "global_structure": 0.5413441986882049,
+        "neighbor_recall_k2": 0.18482,
+        "collapse_ratio": 0.008274728862402872,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": [
+          "collapsed embedding (ratio 0.008; PCA 0.273)"
+        ]
+      },
+      "laplacian": {
+        "trustworthiness": 0.7693022176731491,
+        "neighbor_recall": 0.11086666666666666,
+        "global_structure": 0.5463877453770376,
+        "neighbor_recall_k2": 0.24588000000000002,
+        "collapse_ratio": 0.056274068129733,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": []
+      },
+      "diffusion_maps": {
+        "trustworthiness": 0.7195780962128966,
+        "neighbor_recall": 0.07066666666666667,
+        "global_structure": 0.4403863455787765,
+        "neighbor_recall_k2": 0.18636000000000003,
+        "collapse_ratio": 0.006997675067839682,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": [
+          "near-disconnected diffusion graph (Markov spectral gap 9.0e-08)",
+          "collapsed embedding (ratio 0.007; PCA 0.273)"
+        ]
+      },
+      "gplvm": {
+        "trustworthiness": 0.7870938928693278,
+        "neighbor_recall": 0.1060888888888889,
+        "global_structure": 0.7248938109135024,
+        "neighbor_recall_k2": 0.24668,
+        "collapse_ratio": 0.3687792932117676,
+        "stability_v1": 0.16388888888888892,
+        "seed_stability": 0.16388888888888892,
+        "seed_invariant": false,
+        "severe_reasons": []
+      },
+      "tsne": {
+        "trustworthiness": 0.8452157625383828,
+        "neighbor_recall": 0.25453333333333333,
+        "global_structure": 0.5484581506143001,
+        "neighbor_recall_k2": 0.34994,
+        "collapse_ratio": 0.28633169145311743,
+        "stability_v1": 1.0,
+        "seed_stability": 1.0,
+        "seed_invariant": true,
+        "severe_reasons": []
+      },
+      "umap": {
+        "trustworthiness": 0.8096009553053566,
+        "neighbor_recall": 0.1932222222222222,
+        "global_structure": 0.5046871878882767,
+        "neighbor_recall_k2": 0.3032733333333333,
+        "collapse_ratio": 0.14663423414113871,
+        "stability_v1": 0.32148888888888894,
+        "seed_stability": 0.32148888888888894,
+        "seed_invariant": false,
+        "severe_reasons": []
+      }
+    }
+  },
+  "pathmnist": {
+    "delivered_v1": [
+      "pca",
+      "tsne",
+      "laplacian",
+      "lle"
+    ],
+    "sanity_reproduces_v1": true,
+    "max_abs_diff_trust_vs_v1": 0.0,
+    "max_abs_diff_recall_vs_v1": 0.0,
+    "steps": [
+      {
+        "step": "O0 v1 rules as delivered (sanity check)",
+        "selected": [
+          "pca",
+          "tsne",
+          "laplacian",
+          "lle"
+        ]
+      },
+      {
+        "step": "O1 + runtime materiality (epsilon-Pareto)",
+        "selected": [
+          "pca",
+          "tsne"
+        ]
+      },
+      {
+        "step": "O2 + collapse / spectral-gap / convergence checks",
+        "selected": [
+          "pca",
+          "tsne"
+        ]
+      },
+      {
+        "step": "O3 + global-structure component (v2 weights, v1 stability)",
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "mds"
+        ]
+      },
+      {
+        "step": "O4 runtime ignored entirely",
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "mds"
+        ]
+      }
+    ],
+    "methods": {
+      "pca": {
+        "trustworthiness": 0.8407115660184237,
+        "neighbor_recall": 0.241,
+        "global_structure": 0.856330494895322,
+        "neighbor_recall_k2": 0.39548,
+        "collapse_ratio": 0.21087748008192572,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": []
+      },
+      "kernel_pca": {
+        "trustworthiness": 0.8343237120436711,
+        "neighbor_recall": 0.18833333333333335,
+        "global_structure": 0.7929920714372729,
+        "neighbor_recall_k2": 0.34624,
+        "collapse_ratio": 0.38217240399061564,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": []
+      },
+      "mds": {
+        "trustworthiness": 0.8464092346184464,
+        "neighbor_recall": 0.2531333333333333,
+        "global_structure": 0.9481728839098488,
+        "neighbor_recall_k2": 0.43047333333333326,
+        "collapse_ratio": 0.3137394747653603,
+        "stability_v1": 0.5872444444444445,
+        "seed_stability": 0.5872444444444445,
+        "seed_invariant": false,
+        "severe_reasons": []
+      },
+      "isomap": {
+        "trustworthiness": 0.8402024564994882,
+        "neighbor_recall": 0.19673333333333334,
+        "global_structure": 0.8924619258248638,
+        "neighbor_recall_k2": 0.35331999999999997,
+        "collapse_ratio": 0.2652240983575428,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": []
+      },
+      "lle": {
+        "trustworthiness": 0.834536131013306,
+        "neighbor_recall": 0.18106666666666665,
+        "global_structure": 0.8349157695029312,
+        "neighbor_recall_k2": 0.32165999999999995,
+        "collapse_ratio": 0.07661115544111552,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": []
+      },
+      "laplacian": {
+        "trustworthiness": 0.8319877857386557,
+        "neighbor_recall": 0.19860000000000003,
+        "global_structure": 0.8125740993576007,
+        "neighbor_recall_k2": 0.35062,
+        "collapse_ratio": 0.07848704703665695,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": []
+      },
+      "diffusion_maps": {
+        "trustworthiness": 0.8258448993517571,
+        "neighbor_recall": 0.18653333333333336,
+        "global_structure": 0.8329999068794206,
+        "neighbor_recall_k2": 0.34532,
+        "collapse_ratio": 0.16924380318064083,
+        "stability_v1": 1.0,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "severe_reasons": []
+      },
+      "gplvm": {
+        "trustworthiness": 0.839082088024565,
+        "neighbor_recall": 0.1835111111111111,
+        "global_structure": 0.8587336827008817,
+        "neighbor_recall_k2": 0.36580666666666667,
+        "collapse_ratio": 0.23439654561858406,
+        "stability_v1": 0.19099999999999998,
+        "seed_stability": 0.19099999999999998,
+        "seed_invariant": false,
+        "severe_reasons": []
+      },
+      "tsne": {
+        "trustworthiness": 0.8772350051177072,
+        "neighbor_recall": 0.3438666666666667,
+        "global_structure": 0.8275185826393869,
+        "neighbor_recall_k2": 0.45422,
+        "collapse_ratio": 0.3551701622516599,
+        "stability_v1": 1.0,
+        "seed_stability": 1.0,
+        "seed_invariant": true,
+        "severe_reasons": []
+      },
+      "umap": {
+        "trustworthiness": 0.852412100534516,
+        "neighbor_recall": 0.28251111111111116,
+        "global_structure": 0.830804335653768,
+        "neighbor_recall_k2": 0.40494,
+        "collapse_ratio": 0.2762484755383141,
+        "stability_v1": 0.6229555555555555,
+        "seed_stability": 0.6229555555555555,
+        "seed_invariant": false,
+        "severe_reasons": []
+      }
+    }
+  }
+}

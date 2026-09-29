@@ -1,11 +1,12 @@
+import json
 import os
 from datetime import UTC, datetime
 
-from .config import ROOT
+from .final import final_stage
 from .pilot import inspect_stage, pilot_stage
 from .reporting import report_stage
 from .selector import selection_stage
-from .tuning import final_stage, tuning_stage
+from .tuning import tuning_stage
 from .validation import validate
 
 STAGES = {
@@ -22,13 +23,19 @@ def run_stage(stage, cfg, force=False):
     if stage != "inspect" and not os.environ.get("SLURM_JOB_ID") and cfg.pilot.max_samples > 100:
         raise RuntimeError("Benchmark computation requires a SLURM allocation; use scripts/slurm")
     print(f"STAGE {stage} dataset={cfg.dataset.name}", flush=True)
+    started = datetime.now(UTC)
     STAGES[stage](cfg, force)
-    with open(ROOT / "docs/PROGRESS.md", "a") as f:
-        f.write(
-            f"\n- {datetime.now(UTC).isoformat()}: {cfg.dataset.name} {stage} complete; "
-            f"job={os.environ.get('SLURM_JOB_ID', 'local-small-test')}; outputs={cfg.output}; "
-            "stage errors, if any, are preserved in method result files.\n"
-        )
+    # Machine-readable stage history lives with the outputs, not in the hand-written docs.
+    cfg.output.mkdir(parents=True, exist_ok=True)
+    with open(cfg.output / "stage_history.jsonl", "a") as f:
+        f.write(json.dumps({
+            "stage": stage,
+            "dataset": cfg.dataset.name,
+            "started": started.isoformat(),
+            "finished": datetime.now(UTC).isoformat(),
+            "job": os.environ.get("SLURM_JOB_ID"),
+            "host": os.uname().nodename,
+        }) + "\n")
 
 
 def run_all(cfg, force=False):

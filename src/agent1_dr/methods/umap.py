@@ -12,7 +12,9 @@ class Method(SklearnMethod):
         return {"n_neighbors": 15, "min_dist": 0.1, "n_jobs": 1, "n_epochs": 300}
 
     def tuning_grid(self, X):
+        # The README grid: n_neighbors 15/30/50 x min_dist 0.1/0.5 (default first).
         return [
-            dict(self.default_params(X), **p)
-            for p in [{}, {"n_neighbors": 30}, {"n_neighbors": 50}, {"min_dist": 0.5}]
+            dict(self.default_params(X), n_neighbors=k, min_dist=d)
+            for d in [0.1, 0.5]
+            for k in [15, 30, 50]
         ]

@@ -7,9 +7,16 @@ dataset:
 pilot:
   max_samples: 60
   n_neighbors_eval: 5
+  n_neighbors_secondary: 10
   n_repeats_stochastic: 2
+  n_subsamples: 3
   timeout_minutes_per_run: 3
 methods:
   gplvm: {epochs: 12, inducing_points: 8, batch_size: 60}
 selection:
   max_final_methods: 2
+final:
+  probe_sizes: [30, 60]
+  size_ladder: [60, 90]
+  time_budget_minutes: 5
+  memory_budget_gb: 4

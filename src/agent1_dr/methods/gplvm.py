@@ -2,7 +2,11 @@
 
 Reference: GPyTorch GPLVM SVI tutorial; Titsias & Lawrence (2010).
 The loss includes KL(q(X)||p(X)) through VariationalLatentVariable.
+One epoch is ceil(n / batch_size) minibatch steps, so every observation receives the same
+expected number of updates at any cohort size (75 epochs = 300 steps at n = 1000).
 """
+
+import math
 
 import gpytorch as gp
 import numpy as np
@@ -37,7 +41,7 @@ class Method(DRMethod):
     stochastic = True
 
     def default_params(self, X):
-        return {"epochs": 300, "inducing_points": 32, "learning_rate": 0.03, "batch_size": 256}
+        return {"epochs": 75, "inducing_points": 32, "learning_rate": 0.03, "batch_size": 256}
 
     def tuning_grid(self, X):
         return [
@@ -64,7 +68,8 @@ class Method(DRMethod):
         losses = []
         model.train()
         likelihood.train()
-        for _ in range(params["epochs"]):
+        steps = params["epochs"] * math.ceil(len(X) / params["batch_size"])
+        for _ in range(steps):
             idx = torch.randperm(len(X))[: params["batch_size"]]
             optimizer.zero_grad()
             loss = -elbo(model(model.sample_latent_variable()[idx]), Y[idx].T).sum()
@@ -74,12 +79,17 @@ class Method(DRMethod):
             loss.backward()
             optimizer.step()
         embedding = model.X.q_mu.detach().numpy()
+        tail = max(len(losses) // 10, 1)
+        last, previous = np.mean(losses[-tail:]), np.mean(losses[-2 * tail : -tail] or losses[-tail:])
         return embedding, {
             "loss_history": losses,
             "initial_loss": losses[0],
             "final_loss": losses[-1],
             "latent_displacement": float(np.linalg.norm(embedding - initial.numpy())),
             "optimization_steps": len(losses),
+            "epochs": params["epochs"],
+            # Relative change of the mean minibatch loss between the last two tenths of training.
+            "loss_plateau_relative_change": float(abs(last - previous) / max(abs(previous), 1e-12)),
             "device": "cpu",
             "convergence": "fixed-budget optimization; convergence not guaranteed",
         }

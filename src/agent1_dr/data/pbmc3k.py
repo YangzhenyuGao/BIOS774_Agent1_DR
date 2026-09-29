@@ -31,4 +31,4 @@ def load(cfg):
         "annotation": "processed louvain annotation aligned by exact barcode",
         "unannotated": int((labels == "unannotated").sum()),
     }
-    return raw.X.tocsr(), labels, np.asarray(raw.obs_names, dtype=str), provenance, raw
+    return raw.X.tocsr(), labels, np.asarray(raw.obs_names, dtype=str), provenance, np.asarray(raw.var_names, dtype=str)

@@ -3,28 +3,11 @@
 #SBATCH --partition=general
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=16G
-#SBATCH --time=04:00:00
-#SBATCH --output=/proj/yunligrp/users/ygao/BIOS774Agent/Agent1_DR/logs/%x_%j.log
-set -euo pipefail
-export PYTHONNOUSERSITE=1
-export LD_LIBRARY_PATH=/proj/yunligrp/users/ygao/conda/envs/agent/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-cd /proj/yunligrp/users/ygao/BIOS774Agent/Agent1_DR
-export PATH=/proj/yunligrp/users/ygao/conda/envs/agent/bin:$PATH
-export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMBA_NUM_THREADS=1
-export MPLCONFIGDIR="$PWD/.cache/matplotlib" NUMBA_CACHE_DIR="$PWD/.cache/numba"
+#SBATCH --mem=32G
+#SBATCH --time=03:00:00
+#SBATCH --output=/proj/yunligrp/users/ygao/BIOS774Agent/Agent1_DR/logs/slurm/%x_%j.log
+source /proj/yunligrp/users/ygao/BIOS774Agent/Agent1_DR/scripts/slurm/common.sh
 CONFIG=${1:-config/pbmc3k.yaml}
-DATASET=$(basename "$CONFIG" .yaml)
-mkdir -p "logs/$DATASET/pilot"
-exec > >(tee "logs/$DATASET/pilot/${SLURM_JOB_ID}.log") 2>&1
-hostname
-date -Is
-printf 'Job=%s config=%s\n' "$SLURM_JOB_ID" "$CONFIG"
-git rev-parse HEAD || true
-python -c 'from agent1_dr.utils import versions; print(versions())'
-python - <<'PY'
-from agent1_dr.utils import read_json, code_hash
-gate = read_json('logs/smoke_acceptance.json')
-assert gate['passed'] and gate['code_hash'] == code_hash(), 'Pass current-code smoke and pilot dry run first'
-PY
+start_log "$(basename "$CONFIG" .yaml)" pilot
+require_smoke
 python -m agent1_dr pilot --config "$CONFIG" --resume

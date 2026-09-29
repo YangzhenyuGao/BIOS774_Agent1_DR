@@ -17,6 +17,8 @@ class DatasetProfile:
 class PreprocessingPlan:
     actions: list[dict]
     labels_used_for_fit: bool = False
+    branch: str = ""
+    rule_evidence: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -34,6 +36,8 @@ class MethodRunResult:
     package_versions: dict = field(default_factory=dict)
     diagnostics: dict = field(default_factory=dict)
     embedding: Any = None
+    # fit_wall_seconds (= runtime_seconds), fit_cpu_seconds and shared batch overheads.
+    timing: dict = field(default_factory=dict)
 
 
 @dataclass

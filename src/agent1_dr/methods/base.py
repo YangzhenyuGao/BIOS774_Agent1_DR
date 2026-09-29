@@ -32,6 +32,10 @@ class DRMethod(ABC):
     def fit_transform(self, X, seed, params):
         """Return coordinates and method-specific diagnostics; never receive labels."""
 
+    def after_fit(self):
+        """Untimed diagnostics about the most recent fit (runtime covers fit_transform only)."""
+        return {}
+
 
 def median_gamma(X):
     d = pdist(X[: min(len(X), 500)], metric="sqeuclidean")
@@ -49,8 +53,15 @@ class SklearnMethod(DRMethod):
             kwargs["random_state"] = seed
         model = self.estimator(**kwargs)
         Y = model.fit_transform(X)
+        self._model = model
         diag = {}
-        for attribute in ("explained_variance_ratio_", "n_iter_", "stress_", "kl_divergence_"):
+        for attribute in (
+            "explained_variance_ratio_",
+            "n_iter_",
+            "stress_",
+            "kl_divergence_",
+            "reconstruction_error_",
+        ):
             if hasattr(model, attribute):
                 value = getattr(model, attribute)
                 diag[attribute] = value.tolist() if isinstance(value, np.ndarray) else value
