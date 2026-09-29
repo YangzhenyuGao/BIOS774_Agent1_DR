@@ -1,0 +1,111 @@
+{
+  "status": "PASSED",
+  "scope": "dataset",
+  "checks": [
+    {
+      "check": "registry contains ten callable real methods",
+      "passed": true
+    },
+    {
+      "check": "inspection manifest checksums and configuration/code provenance",
+      "passed": true
+    },
+    {
+      "check": "pilot manifest checksums and configuration/code provenance",
+      "passed": true
+    },
+    {
+      "check": "selection manifest checksums and configuration/code provenance",
+      "passed": true
+    },
+    {
+      "check": "tuning manifest checksums and configuration/code provenance",
+      "passed": true
+    },
+    {
+      "check": "final manifest checksums and configuration/code provenance",
+      "passed": true
+    },
+    {
+      "check": "all ten methods have terminal pilot status",
+      "passed": true
+    },
+    {
+      "check": "pilot input is common to all methods and subsamples are exact subsets",
+      "passed": true
+    },
+    {
+      "check": "pilot pca: 6 fits with input, output, metrics and status",
+      "passed": true
+    },
+    {
+      "check": "pilot kernel_pca: 6 fits with input, output, metrics and status",
+      "passed": true
+    },
+    {
+      "check": "pilot mds: 8 fits with input, output, metrics and status",
+      "passed": true
+    },
+    {
+      "check": "pilot isomap: 6 fits with input, output, metrics and status",
+      "passed": true
+    },
+    {
+      "check": "pilot lle: 6 fits with input, output, metrics and status",
+      "passed": true
+    },
+    {
+      "check": "pilot laplacian: 6 fits with input, output, metrics and status",
+      "passed": true
+    },
+    {
+      "check": "pilot diffusion_maps: 6 fits with input, output, metrics and status",
+      "passed": true
+    },
+    {
+      "check": "pilot gplvm: 8 fits with input, output, metrics and status",
+      "passed": true
+    },
+    {
+      "check": "pilot tsne: 8 fits with input, output, metrics and status",
+      "passed": true
+    },
+    {
+      "check": "pilot umap: 8 fits with input, output, metrics and status",
+      "passed": true
+    },
+    {
+      "check": "metrics contain no unexplained missing values",
+      "passed": true
+    },
+    {
+      "check": "selection matches the pre-registered label-free rules",
+      "passed": true
+    },
+    {
+      "check": "tuning restricted to shortlist and choices follow the equivalence rule",
+      "passed": true
+    },
+    {
+      "check": "final embeddings, IDs, labels, and label-free preprocessing align",
+      "passed": true
+    },
+    {
+      "check": "final cohort size follows the recorded scaling rule",
+      "passed": true
+    },
+    {
+      "check": "expected figures exist with valid checksums and no stale figures",
+      "passed": true
+    },
+    {
+      "check": "dataset report opens and has text on every page",
+      "passed": true
+    },
+    {
+      "check": "report evidence and PDF checksums",
+      "passed": true
+    }
+  ],
+  "warnings": []
+}

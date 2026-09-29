@@ -1,0 +1,17 @@
+{
+  "pca": {
+    "grid_index": 0,
+    "quality": 0.49299236554038184,
+    "reason": "default has the highest quality"
+  },
+  "mds": {
+    "grid_index": 0,
+    "quality": 0.5671828188456743,
+    "reason": "default has the highest quality"
+  },
+  "tsne": {
+    "grid_index": 0,
+    "quality": 0.5374311135570898,
+    "reason": "default has the highest quality"
+  }
+}

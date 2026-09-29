@@ -1,0 +1,131 @@
+{
+  "actions": [
+    {
+      "action": "observation_qc",
+      "parameters": {
+        "min_features": 200,
+        "max_features": 2500,
+        "max_mito_fraction": 0.05,
+        "retained": 2638
+      },
+      "reason": "Count matrix (sparsity 0.974 >= 0.5, non-negative integer values, 32,738 features >= 1000): remove low-information and extreme observations with configured thresholds; 13 MT- features enable a mitochondrial-fraction filter",
+      "fit_scope": "per-observation fixed thresholds"
+    },
+    {
+      "action": "sample_cohort",
+      "parameters": {
+        "size": 1000,
+        "seed": 774,
+        "stratified": true
+      },
+      "reason": "Common representative cohort; labels, when present, only preserve class proportions",
+      "fit_scope": "cohort design"
+    },
+    {
+      "action": "filter_features",
+      "parameters": {
+        "min_cells": 3,
+        "retained": 11753
+      },
+      "reason": "Remove features detected in too few cohort observations",
+      "fit_scope": "analysis cohort only"
+    },
+    {
+      "action": "normalize_log1p",
+      "parameters": {
+        "target_sum": 10000.0
+      },
+      "reason": "Library sizes vary from 548 to 15,844 (median 2,197): normalize totals and log-compress counts",
+      "fit_scope": "analysis cohort only"
+    },
+    {
+      "action": "select_highly_variable_features",
+      "parameters": {
+        "n_top": 2000,
+        "flavor": "seurat",
+        "n_selected": 2000
+      },
+      "reason": "32,738 sparse features: keep the most variable after normalization",
+      "fit_scope": "analysis cohort only"
+    },
+    {
+      "action": "scale_clip",
+      "parameters": {
+        "max_value": 10
+      },
+      "reason": "Balance feature scales and limit outliers",
+      "fit_scope": "analysis cohort only"
+    },
+    {
+      "action": "common_pca_representation",
+      "parameters": {
+        "n_components": 50,
+        "explained_variance_ratio": [
+          0.024256984452912706,
+          0.013118260373370485,
+          0.010822900161242361,
+          0.009570856246456878,
+          0.005824842701648704,
+          0.004108355584012923,
+          0.0039125449243739025,
+          0.0035371214983504376,
+          0.003231145090000172,
+          0.003141697468147527,
+          0.003098943681579428,
+          0.0030533193172284966,
+          0.0030209085560805493,
+          0.0029886985270064447,
+          0.0029530842905947114,
+          0.0029221946922581635,
+          0.002909027697927758,
+          0.0028737852370017388,
+          0.002860322632703161,
+          0.00285599029734494,
+          0.0028379625081557994,
+          0.00282206050404743,
+          0.00278301379482695,
+          0.002768894142459893,
+          0.0027505807942897103,
+          0.0027409381413121894,
+          0.002731552368793726,
+          0.002700606081578947,
+          0.0026925355892279124,
+          0.0026729415137486173,
+          0.0026675171209224724,
+          0.0026543152803454395,
+          0.0026416212541501634,
+          0.002638197722737953,
+          0.002612105808999629,
+          0.0026082364568471915,
+          0.0025976989915288584,
+          0.002577018379270473,
+          0.0025735813644491936,
+          0.0025494952310013944,
+          0.0025411644804472313,
+          0.002537458571546818,
+          0.002524425620168029,
+          0.0025127246246286366,
+          0.002498526166406374,
+          0.0024837021223921337,
+          0.002478700246482723,
+          0.002465431219506768,
+          0.002461551468688508,
+          0.0024380366107602815
+        ]
+      },
+      "reason": "Common denoising and computational input for all ten methods; the displayed PCA is two-dimensional",
+      "fit_scope": "analysis cohort only"
+    }
+  ],
+  "labels_used_for_fit": false,
+  "branch": "count_matrix",
+  "rule_evidence": {
+    "sparsity": 0.9741281057464086,
+    "nonnegative": true,
+    "integer_valued": true,
+    "min_value": 0.0,
+    "max_value": 419.0,
+    "n_features": 32738,
+    "mitochondrial_features": 13
+  }
+}

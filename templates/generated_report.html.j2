@@ -1,22 +1,24 @@
 <!doctype html><html><head><meta charset="utf-8"><title>Agent 1 report: {{ name }}</title><style>{{ css|safe }}</style></head><body>
 {% set s = profile.statistics %}{% set d = decisions %}{% set sp = size_plan %}
+{% set titles = {'pbmc3k': 'PBMC3k single-cell RNA-seq', 'pathmnist': 'PathMNIST histopathology images', 'synthetic': 'Synthetic demonstration'} %}
 <header class="title">
 <p class="kicker">BIOS 774 · Agent 1 · evidence-driven dimensionality reduction</p>
-<h1>{{ profile.provenance.source|default('Synthetic numerical demonstration') }}</h1>
+<h1>Dataset report: {{ titles.get(name, name) }}</h1>
+<p class="meta">Source: {{ profile.provenance.source|default('synthetic numerical data (fixed seed)') }}</p>
 <p class="meta">Dataset <strong>{{ name }}</strong> · run {{ manifest.created_at[:10] }} · job {{ manifest.job_id }} · commit {{ (manifest.git_commit or 'none')[:10] }}</p>
 </header>
 <p class="notice">Reporting mode: {{ mode }}. {% if mode == 'deterministic' %}This report was rendered from saved, validated evidence by deterministic templates; no language model wrote it. Every number below is read from a checksummed artifact in the evidence bundle.{% else %}An OpenAI model organized an extractive summary; every returned sentence was checked against the evidence list.{% endif %}</p>
 
 <h2>At a glance</h2>
 <table class="kv"><tbody>
-<tr><th>Source</th><td>{{ '{:,}'.format(profile.n_samples) }} observations × {{ '{:,}'.format(profile.n_features) }} numerical features{% if cohort.selected < profile.n_samples %}; <strong>the final analysis uses a declared subset ({{ '{:,}'.format(cohort.selected) }} observations), not the complete dataset</strong>{% endif %}</td></tr>
+<tr><th>Source</th><td>{{ '{:,}'.format(profile.n_samples) }} observations × {{ '{:,}'.format(profile.n_features) }} numerical features{% if cohort.selected < cohort.available_post_qc %}; <strong>the final analysis uses a declared stratified subset ({{ '{:,}'.format(cohort.selected) }} of {{ '{:,}'.format(cohort.available_post_qc) }} observations), not the complete dataset</strong>{% elif cohort.available_post_qc < profile.n_samples %}; the final analysis uses all {{ '{:,}'.format(cohort.selected) }} observations that pass QC ({{ '{:,}'.format(profile.n_samples - cohort.available_post_qc) }} removed by QC){% else %}; the final analysis uses all observations{% endif %}</td></tr>
 <tr><th>Preprocessing branch</th><td>{{ plan.branch|replace('_', ' ') }} (chosen from the data profile, not the dataset name)</td></tr>
 <tr><th>Pilot</th><td>{{ '{:,}'.format(pilot_cohort.selected) }} observations; all ten methods; {{ cfg.pilot.n_repeats_stochastic }} seeds for stochastic methods; {{ cfg.pilot.n_subsamples }} refits on {{ (100 * cfg.pilot.subsample_fraction)|round|int }}% subsamples for every method</td></tr>
 <tr><th>Retained</th><td>{% for m in d.selected %}{{ names[m] }}{% if not loop.last %}, {% endif %}{% endfor %}{% if d.low_confidence %} (low-confidence fallback){% endif %}</td></tr>
 <tr><th>Final cohort</th><td>{{ '{:,}'.format(cohort.selected) }} observations; binding constraint: {{ sp.binding_constraint }}</td></tr>
 </tbody></table>
 <h3>Findings</h3>
-<ul class="facts">{% for f in facts %}<li>{{ f }}</li>{% endfor %}</ul>
+<ul class="facts">{% for f in facts %}<li>{{ f.replace(', so its seed stability is trivially 1', ', so seed stability is trivially 1') }}</li>{% endfor %}</ul>
 {% if summary %}<h3>API-organized validated evidence</h3>{% for sentence in summary.sentences %}<p>{{ sentence }}</p>{% endfor %}{% endif %}
 
 <h2>1 · Dataset inspection</h2>

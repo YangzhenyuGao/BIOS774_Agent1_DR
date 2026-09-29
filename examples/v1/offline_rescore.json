@@ -52,11 +52,114 @@
         ]
       }
     ],
+    "runtime_jitter": [
+      {
+        "method": "pca",
+        "delta_seconds": -0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "pca",
+        "delta_seconds": 0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "kernel_pca",
+        "delta_seconds": -0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "kernel_pca",
+        "delta_seconds": 0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "isomap",
+        "delta_seconds": -0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "isomap",
+        "delta_seconds": 0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "lle",
+        "delta_seconds": -0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "lle",
+        "delta_seconds": 0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "laplacian",
+        "delta_seconds": -0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "laplacian",
+        "delta_seconds": 0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      }
+    ],
+    "distinct_shortlists_under_jitter": 1,
     "methods": {
       "pca": {
         "trustworthiness": 0.7676714431934493,
         "neighbor_recall": 0.09019999999999999,
-        "global_structure": 0.6769099304619661,
+        "global_structure": 0.6769099304619668,
         "neighbor_recall_k2": 0.2255,
         "collapse_ratio": 0.2727058069065468,
         "stability_v1": 1.0,
@@ -67,7 +170,7 @@
       "kernel_pca": {
         "trustworthiness": 0.7157452064141931,
         "neighbor_recall": 0.069,
-        "global_structure": 0.5693109866244231,
+        "global_structure": 0.569310986624424,
         "neighbor_recall_k2": 0.17234,
         "collapse_ratio": 0.47414589591132184,
         "stability_v1": 1.0,
@@ -78,7 +181,7 @@
       "mds": {
         "trustworthiness": 0.7650924599112932,
         "neighbor_recall": 0.0969111111111111,
-        "global_structure": 0.8329664468839537,
+        "global_structure": 0.832966446883954,
         "neighbor_recall_k2": 0.24172666666666667,
         "collapse_ratio": 0.27805339440120463,
         "stability_v1": 0.27066666666666667,
@@ -91,7 +194,7 @@
       "isomap": {
         "trustworthiness": 0.7866979870351416,
         "neighbor_recall": 0.10513333333333333,
-        "global_structure": 0.6800737892589097,
+        "global_structure": 0.6800737892589106,
         "neighbor_recall_k2": 0.23016,
         "collapse_ratio": 0.15985416962245158,
         "stability_v1": 1.0,
@@ -102,7 +205,7 @@
       "lle": {
         "trustworthiness": 0.7295918799044694,
         "neighbor_recall": 0.0768,
-        "global_structure": 0.5413441986882049,
+        "global_structure": 0.5413441986882047,
         "neighbor_recall_k2": 0.18482,
         "collapse_ratio": 0.008274728862402872,
         "stability_v1": 1.0,
@@ -115,7 +218,7 @@
       "laplacian": {
         "trustworthiness": 0.7693022176731491,
         "neighbor_recall": 0.11086666666666666,
-        "global_structure": 0.5463877453770376,
+        "global_structure": 0.5463877453770386,
         "neighbor_recall_k2": 0.24588000000000002,
         "collapse_ratio": 0.056274068129733,
         "stability_v1": 1.0,
@@ -126,7 +229,7 @@
       "diffusion_maps": {
         "trustworthiness": 0.7195780962128966,
         "neighbor_recall": 0.07066666666666667,
-        "global_structure": 0.4403863455787765,
+        "global_structure": 0.4403863455787763,
         "neighbor_recall_k2": 0.18636000000000003,
         "collapse_ratio": 0.006997675067839682,
         "stability_v1": 1.0,
@@ -140,7 +243,7 @@
       "gplvm": {
         "trustworthiness": 0.7870938928693278,
         "neighbor_recall": 0.1060888888888889,
-        "global_structure": 0.7248938109135024,
+        "global_structure": 0.7248938109135029,
         "neighbor_recall_k2": 0.24668,
         "collapse_ratio": 0.3687792932117676,
         "stability_v1": 0.16388888888888892,
@@ -162,7 +265,7 @@
       "umap": {
         "trustworthiness": 0.8096009553053566,
         "neighbor_recall": 0.1932222222222222,
-        "global_structure": 0.5046871878882767,
+        "global_structure": 0.5046871878882774,
         "neighbor_recall_k2": 0.3032733333333333,
         "collapse_ratio": 0.14663423414113871,
         "stability_v1": 0.32148888888888894,
@@ -225,11 +328,108 @@
         ]
       }
     ],
+    "runtime_jitter": [
+      {
+        "method": "pca",
+        "delta_seconds": -0.2,
+        "selected": [
+          "pca",
+          "tsne"
+        ]
+      },
+      {
+        "method": "pca",
+        "delta_seconds": 0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "kernel_pca",
+        "delta_seconds": -0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "laplacian",
+          "lle"
+        ]
+      },
+      {
+        "method": "kernel_pca",
+        "delta_seconds": 0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "laplacian",
+          "lle"
+        ]
+      },
+      {
+        "method": "isomap",
+        "delta_seconds": -0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "isomap"
+        ]
+      },
+      {
+        "method": "isomap",
+        "delta_seconds": 0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "laplacian",
+          "lle"
+        ]
+      },
+      {
+        "method": "lle",
+        "delta_seconds": -0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "laplacian",
+          "lle"
+        ]
+      },
+      {
+        "method": "lle",
+        "delta_seconds": 0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "laplacian",
+        "delta_seconds": -0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "laplacian"
+        ]
+      },
+      {
+        "method": "laplacian",
+        "delta_seconds": 0.2,
+        "selected": [
+          "pca",
+          "tsne",
+          "lle"
+        ]
+      }
+    ],
+    "distinct_shortlists_under_jitter": 6,
     "methods": {
       "pca": {
         "trustworthiness": 0.8407115660184237,
         "neighbor_recall": 0.241,
-        "global_structure": 0.856330494895322,
+        "global_structure": 0.8563304948953214,
         "neighbor_recall_k2": 0.39548,
         "collapse_ratio": 0.21087748008192572,
         "stability_v1": 1.0,
@@ -240,7 +440,7 @@
       "kernel_pca": {
         "trustworthiness": 0.8343237120436711,
         "neighbor_recall": 0.18833333333333335,
-        "global_structure": 0.7929920714372729,
+        "global_structure": 0.7929920714372735,
         "neighbor_recall_k2": 0.34624,
         "collapse_ratio": 0.38217240399061564,
         "stability_v1": 1.0,
@@ -251,7 +451,7 @@
       "mds": {
         "trustworthiness": 0.8464092346184464,
         "neighbor_recall": 0.2531333333333333,
-        "global_structure": 0.9481728839098488,
+        "global_structure": 0.9481728839098489,
         "neighbor_recall_k2": 0.43047333333333326,
         "collapse_ratio": 0.3137394747653603,
         "stability_v1": 0.5872444444444445,
@@ -262,7 +462,7 @@
       "isomap": {
         "trustworthiness": 0.8402024564994882,
         "neighbor_recall": 0.19673333333333334,
-        "global_structure": 0.8924619258248638,
+        "global_structure": 0.8924619258248663,
         "neighbor_recall_k2": 0.35331999999999997,
         "collapse_ratio": 0.2652240983575428,
         "stability_v1": 1.0,
@@ -273,7 +473,7 @@
       "lle": {
         "trustworthiness": 0.834536131013306,
         "neighbor_recall": 0.18106666666666665,
-        "global_structure": 0.8349157695029312,
+        "global_structure": 0.834915769502933,
         "neighbor_recall_k2": 0.32165999999999995,
         "collapse_ratio": 0.07661115544111552,
         "stability_v1": 1.0,
@@ -284,7 +484,7 @@
       "laplacian": {
         "trustworthiness": 0.8319877857386557,
         "neighbor_recall": 0.19860000000000003,
-        "global_structure": 0.8125740993576007,
+        "global_structure": 0.8125740993576003,
         "neighbor_recall_k2": 0.35062,
         "collapse_ratio": 0.07848704703665695,
         "stability_v1": 1.0,
@@ -295,7 +495,7 @@
       "diffusion_maps": {
         "trustworthiness": 0.8258448993517571,
         "neighbor_recall": 0.18653333333333336,
-        "global_structure": 0.8329999068794206,
+        "global_structure": 0.8329999068794195,
         "neighbor_recall_k2": 0.34532,
         "collapse_ratio": 0.16924380318064083,
         "stability_v1": 1.0,
@@ -306,7 +506,7 @@
       "gplvm": {
         "trustworthiness": 0.839082088024565,
         "neighbor_recall": 0.1835111111111111,
-        "global_structure": 0.8587336827008817,
+        "global_structure": 0.858733682700882,
         "neighbor_recall_k2": 0.36580666666666667,
         "collapse_ratio": 0.23439654561858406,
         "stability_v1": 0.19099999999999998,
@@ -317,7 +517,7 @@
       "tsne": {
         "trustworthiness": 0.8772350051177072,
         "neighbor_recall": 0.3438666666666667,
-        "global_structure": 0.8275185826393869,
+        "global_structure": 0.8275185826393853,
         "neighbor_recall_k2": 0.45422,
         "collapse_ratio": 0.3551701622516599,
         "stability_v1": 1.0,

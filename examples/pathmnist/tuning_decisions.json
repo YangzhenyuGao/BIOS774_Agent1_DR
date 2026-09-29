@@ -1,0 +1,22 @@
+{
+  "pca": {
+    "grid_index": 0,
+    "quality": 0.635463260410786,
+    "reason": "default has the highest quality"
+  },
+  "mds": {
+    "grid_index": 0,
+    "quality": 0.6656560396801725,
+    "reason": "default has the highest quality"
+  },
+  "tsne": {
+    "grid_index": 0,
+    "quality": 0.6526936244757049,
+    "reason": "best grid point 2 gains 0.0028 <= margin 0.0050; default kept"
+  },
+  "umap": {
+    "grid_index": 0,
+    "quality": 0.6211368918787809,
+    "reason": "default has the highest quality"
+  }
+}

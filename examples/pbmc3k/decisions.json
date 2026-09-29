@@ -1,0 +1,665 @@
+{
+  "selected": [
+    "pca",
+    "mds",
+    "tsne"
+  ],
+  "best_method": "mds",
+  "best_quality": 0.5671828188456743,
+  "threshold": 0.5104645369611069,
+  "equivalent_to_best": [
+    "mds"
+  ],
+  "pareto_frontier": [
+    "mds",
+    "pca"
+  ],
+  "eligible": [
+    "mds",
+    "pca",
+    "tsne"
+  ],
+  "low_confidence": false,
+  "labels_used": false,
+  "weights": {
+    "trustworthiness": 0.35,
+    "neighbor_recall": 0.35,
+    "global_structure": 0.2,
+    "stability": 0.1
+  },
+  "rules": {
+    "stability_key": "stability",
+    "local_suffix": "",
+    "severe_key": "severe_warning",
+    "pareto": "epsilon",
+    "equivalence": true
+  },
+  "quality_formula": "0.35*trustworthiness + 0.35*neighbor_recall + 0.2*global_structure + 0.1*stability",
+  "decisions": [
+    {
+      "method": "pca",
+      "prior_suitability": "Linear variance baseline.",
+      "pilot_evidence": {
+        "method": "pca",
+        "status": "success",
+        "attempts": 6,
+        "successes": 6,
+        "repeats": 1,
+        "subsamples": 5,
+        "trustworthiness": 0.7676714431934493,
+        "neighbor_recall": 0.09019999999999999,
+        "global_structure": 0.6769099304619661,
+        "trustworthiness_k2": 0.7892689886425095,
+        "neighbor_recall_k2": 0.2255,
+        "silhouette": 0.3866721696778125,
+        "collapse_ratio": 0.2531406992289185,
+        "stability": 0.5735537433028137,
+        "stability_global": 0.9697261180390996,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "stability_v1": 1.0,
+        "runtime_seconds": 0.004330490715801716,
+        "runtime_cpu_seconds": 0.004289489000000035,
+        "runtime_subsample_seconds": 0.004463565535843372,
+        "overhead_seconds": 1.8047636169940233,
+        "peak_memory_mb": 155.27734375,
+        "retry_count": 0,
+        "warnings": [],
+        "severe_v1": false,
+        "severe_reasons": [],
+        "diagnostics": {},
+        "parameters": {
+          "svd_solver": "full"
+        },
+        "input_sha256": "261e8a8e98ce7372264d3941aa9daafbc50c4232b682473342bf655c3541a825",
+        "severe_warning": false,
+        "quality": 0.49299236554038184
+      },
+      "decision": "retain",
+      "reason": "Q=0.4930 vs best mds 0.5672; 90% threshold 0.5105; equivalence margin 0.0088; fit runtime 0.00s. Retained as the linear baseline."
+    },
+    {
+      "method": "kernel_pca",
+      "prior_suitability": "Nonlinear kernel structure; quadratic memory.",
+      "pilot_evidence": {
+        "method": "kernel_pca",
+        "status": "success",
+        "attempts": 6,
+        "successes": 6,
+        "repeats": 1,
+        "subsamples": 5,
+        "trustworthiness": 0.7157452064141931,
+        "neighbor_recall": 0.069,
+        "global_structure": 0.5693109866244241,
+        "trustworthiness_k2": 0.7173831260140617,
+        "neighbor_recall_k2": 0.17234,
+        "silhouette": 0.1846420430371603,
+        "collapse_ratio": 0.4700760992978093,
+        "stability": 0.8702130131299695,
+        "stability_global": 0.9993653291039244,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "stability_v1": 1.0,
+        "runtime_seconds": 0.027633965015411377,
+        "runtime_cpu_seconds": 0.02742738499999997,
+        "runtime_subsample_seconds": 0.017798305675387382,
+        "overhead_seconds": 1.700874107889831,
+        "peak_memory_mb": 161.078125,
+        "retry_count": 0,
+        "warnings": [],
+        "severe_v1": false,
+        "severe_reasons": [],
+        "diagnostics": {},
+        "parameters": {
+          "kernel": "rbf",
+          "gamma": 0.002084001351747945,
+          "eigen_solver": "arpack"
+        },
+        "input_sha256": "261e8a8e98ce7372264d3941aa9daafbc50c4232b682473342bf655c3541a825",
+        "severe_warning": false,
+        "quality": 0.47554432088284937
+      },
+      "decision": "exclude",
+      "reason": "Q=0.4755 vs best mds 0.5672; 90% threshold 0.5105; equivalence margin 0.0050; fit runtime 0.03s. Excluded: below threshold, outside the equivalence margin, and made redundant by pca, isomap."
+    },
+    {
+      "method": "mds",
+      "prior_suitability": "Global pairwise geometry; iterative quadratic distance work.",
+      "pilot_evidence": {
+        "method": "mds",
+        "status": "success",
+        "attempts": 8,
+        "successes": 8,
+        "repeats": 3,
+        "subsamples": 5,
+        "trustworthiness": 0.800047560559536,
+        "neighbor_recall": 0.11573333333333331,
+        "global_structure": 0.8552897338997244,
+        "trustworthiness_k2": 0.828069659275284,
+        "neighbor_recall_k2": 0.28306000000000003,
+        "silhouette": 0.24548685081470098,
+        "collapse_ratio": 0.2802537931959828,
+        "stability": 0.7560155920322525,
+        "stability_global": 0.9801901399362227,
+        "seed_stability": 1.0,
+        "seed_invariant": true,
+        "stability_v1": 1.0,
+        "runtime_seconds": 4.136483386158943,
+        "runtime_cpu_seconds": 4.113598668333334,
+        "runtime_subsample_seconds": 2.537759323604405,
+        "overhead_seconds": 1.896292693912983,
+        "peak_memory_mb": 218.859375,
+        "retry_count": 0,
+        "warnings": [],
+        "severe_v1": false,
+        "severe_reasons": [],
+        "diagnostics": {
+          "smacof_iterations": [
+            179,
+            179,
+            179
+          ]
+        },
+        "parameters": {
+          "n_init": 1,
+          "max_iter": 1000,
+          "normalized_stress": "auto",
+          "n_jobs": 1,
+          "metric_mds": true,
+          "metric": "euclidean",
+          "init": "classical_mds"
+        },
+        "input_sha256": "261e8a8e98ce7372264d3941aa9daafbc50c4232b682473342bf655c3541a825",
+        "severe_warning": false,
+        "quality": 0.5671828188456743
+      },
+      "decision": "retain",
+      "reason": "Q=0.5672 vs best mds 0.5672; 90% threshold 0.5105; equivalence margin 0.0050; fit runtime 4.14s. Retained: meets the 90% threshold, practically equivalent to the best, on the quality-runtime frontier."
+    },
+    {
+      "method": "isomap",
+      "prior_suitability": "Geodesic geometry conditional on a connected neighborhood graph.",
+      "pilot_evidence": {
+        "method": "isomap",
+        "status": "success",
+        "attempts": 6,
+        "successes": 6,
+        "repeats": 1,
+        "subsamples": 5,
+        "trustworthiness": 0.7866979870351416,
+        "neighbor_recall": 0.10513333333333333,
+        "global_structure": 0.68007378925891,
+        "trustworthiness_k2": 0.8011014602487831,
+        "neighbor_recall_k2": 0.23016,
+        "silhouette": 0.3535574631090295,
+        "collapse_ratio": 0.15856053573394088,
+        "stability": 0.3309648300005387,
+        "stability_global": 0.9661344472965425,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "stability_v1": 1.0,
+        "runtime_seconds": 0.27614219300448895,
+        "runtime_cpu_seconds": 0.2748168830000002,
+        "runtime_subsample_seconds": 0.17417867947369814,
+        "overhead_seconds": 2.0346627794206142,
+        "peak_memory_mb": 188.0078125,
+        "retry_count": 0,
+        "warnings": [],
+        "severe_v1": false,
+        "severe_reasons": [],
+        "diagnostics": {},
+        "parameters": {
+          "n_neighbors": 15,
+          "eigen_solver": "arpack",
+          "n_jobs": 1
+        },
+        "input_sha256": "261e8a8e98ce7372264d3941aa9daafbc50c4232b682473342bf655c3541a825",
+        "severe_warning": false,
+        "quality": 0.48125220298080207
+      },
+      "decision": "exclude",
+      "reason": "Q=0.4813 vs best mds 0.5672; 90% threshold 0.5105; equivalence margin 0.0050; fit runtime 0.28s. Excluded: below threshold, outside the equivalence margin, and made redundant by pca."
+    },
+    {
+      "method": "lle",
+      "prior_suitability": "Local affine reconstruction conditional on well-conditioned neighborhoods.",
+      "pilot_evidence": {
+        "method": "lle",
+        "status": "success",
+        "attempts": 6,
+        "successes": 6,
+        "repeats": 1,
+        "subsamples": 5,
+        "trustworthiness": 0.7295918799044694,
+        "neighbor_recall": 0.0768,
+        "global_structure": 0.5413441986882039,
+        "trustworthiness_k2": 0.7458312601406165,
+        "neighbor_recall_k2": 0.18482,
+        "silhouette": -0.02326542708034352,
+        "collapse_ratio": 0.07861719948204253,
+        "stability": 0.13736407883918783,
+        "stability_global": 0.6760053973536121,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "stability_v1": 1.0,
+        "runtime_seconds": 0.2124093072488904,
+        "runtime_cpu_seconds": 0.21082548899999987,
+        "runtime_subsample_seconds": 0.1522565245628357,
+        "overhead_seconds": 1.685665937140584,
+        "peak_memory_mb": 171.36328125,
+        "retry_count": 0,
+        "warnings": [],
+        "severe_v1": false,
+        "severe_reasons": [],
+        "diagnostics": {},
+        "parameters": {
+          "n_neighbors": 20,
+          "reg": 0.001,
+          "eigen_solver": "arpack",
+          "n_jobs": 1
+        },
+        "input_sha256": "261e8a8e98ce7372264d3941aa9daafbc50c4232b682473342bf655c3541a825",
+        "severe_warning": false,
+        "quality": 0.40424240558812385
+      },
+      "decision": "exclude",
+      "reason": "Q=0.4042 vs best mds 0.5672; 90% threshold 0.5105; equivalence margin 0.0063; fit runtime 0.21s. Excluded: below threshold, outside the equivalence margin, and made redundant by pca, kernel_pca, isomap."
+    },
+    {
+      "method": "laplacian",
+      "prior_suitability": "Local graph geometry conditional on connectivity.",
+      "pilot_evidence": {
+        "method": "laplacian",
+        "status": "success",
+        "attempts": 6,
+        "successes": 6,
+        "repeats": 1,
+        "subsamples": 5,
+        "trustworthiness": 0.7693022176731491,
+        "neighbor_recall": 0.11086666666666666,
+        "global_structure": 0.5463877453770382,
+        "trustworthiness_k2": 0.785814797187669,
+        "neighbor_recall_k2": 0.24588000000000002,
+        "silhouette": 0.42844593477433374,
+        "collapse_ratio": 0.0675809757740275,
+        "stability": 0.41060584038865144,
+        "stability_global": 0.986523243454642,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "stability_v1": 1.0,
+        "runtime_seconds": 0.09966473095119,
+        "runtime_cpu_seconds": 0.0990743810000001,
+        "runtime_subsample_seconds": 0.06776371300220489,
+        "overhead_seconds": 1.617939935065806,
+        "peak_memory_mb": 166.5546875,
+        "retry_count": 0,
+        "warnings": [],
+        "severe_v1": false,
+        "severe_reasons": [],
+        "diagnostics": {
+          "min_fiedler_value": 0.009332885575661115,
+          "graph_components": 1
+        },
+        "parameters": {
+          "n_neighbors": 30,
+          "affinity": "nearest_neighbors",
+          "eigen_solver": "arpack",
+          "n_jobs": 1
+        },
+        "input_sha256": "261e8a8e98ce7372264d3941aa9daafbc50c4232b682473342bf655c3541a825",
+        "severe_warning": false,
+        "quality": 0.45839724263320825
+      },
+      "decision": "exclude",
+      "reason": "Q=0.4584 vs best mds 0.5672; 90% threshold 0.5105; equivalence margin 0.0050; fit runtime 0.10s. Excluded: below threshold, outside the equivalence margin, and made redundant by pca, kernel_pca, isomap."
+    },
+    {
+      "method": "diffusion_maps",
+      "prior_suitability": "Density-corrected diffusion geometry.",
+      "pilot_evidence": {
+        "method": "diffusion_maps",
+        "status": "success",
+        "attempts": 6,
+        "successes": 6,
+        "repeats": 1,
+        "subsamples": 5,
+        "trustworthiness": 0.7195780962128966,
+        "neighbor_recall": 0.07066666666666667,
+        "global_structure": 0.44038634560615253,
+        "trustworthiness_k2": 0.7374421416982153,
+        "neighbor_recall_k2": 0.18631999999999999,
+        "silhouette": -0.03202732883025467,
+        "collapse_ratio": 0.009081836640474145,
+        "stability": 0.19433994815898384,
+        "stability_global": 0.9002625053102618,
+        "seed_stability": null,
+        "seed_invariant": null,
+        "stability_v1": 1.0,
+        "runtime_seconds": 0.3628732720389962,
+        "runtime_cpu_seconds": 0.3604025100000001,
+        "runtime_subsample_seconds": 0.4802660567685962,
+        "overhead_seconds": 2.202934662811458,
+        "peak_memory_mb": 190.921875,
+        "retry_count": 0,
+        "warnings": [],
+        "severe_v1": false,
+        "severe_reasons": [
+          "collapsed layout (median collapse ratio 0.009 < 0.05 and < 0.25 x PCA 0.253)",
+          "near-disconnected diffusion graph (Markov spectral gap 9.0e-08)"
+        ],
+        "diagnostics": {
+          "min_markov_spectral_gap": 8.971812273431166e-08
+        },
+        "parameters": {
+          "alpha": 0.5,
+          "k": 64,
+          "epsilon": 119.96153447324487
+        },
+        "input_sha256": "261e8a8e98ce7372264d3941aa9daafbc50c4232b682473342bf655c3541a825",
+        "severe_warning": true,
+        "quality": 0.384096930944976
+      },
+      "decision": "exclude",
+      "reason": "Excluded: severe diagnostic \u2014 collapsed layout (median collapse ratio 0.009 < 0.05 and < 0.25 x PCA 0.253); near-disconnected diffusion graph (Markov spectral gap 9.0e-08)."
+    },
+    {
+      "method": "gplvm",
+      "prior_suitability": "Probabilistic nonlinear latent-variable model under a fixed optimization budget.",
+      "pilot_evidence": {
+        "method": "gplvm",
+        "status": "success",
+        "attempts": 8,
+        "successes": 8,
+        "repeats": 3,
+        "subsamples": 5,
+        "trustworthiness": 0.7870938928693278,
+        "neighbor_recall": 0.1060888888888889,
+        "global_structure": 0.7248938109135029,
+        "trustworthiness_k2": 0.8020474634937805,
+        "neighbor_recall_k2": 0.24668,
+        "silhouette": 0.5473707524937677,
+        "collapse_ratio": 0.36762722264430986,
+        "stability": 0.22456386984844193,
+        "stability_global": 0.9260361240899236,
+        "seed_stability": 0.16388888888888892,
+        "seed_invariant": false,
+        "stability_v1": 0.16388888888888892,
+        "runtime_seconds": 9.575087268215915,
+        "runtime_cpu_seconds": 9.485990703999999,
+        "runtime_subsample_seconds": 9.374511308409273,
+        "overhead_seconds": 12.013698840513825,
+        "peak_memory_mb": 474.37890625,
+        "retry_count": 0,
+        "warnings": [],
+        "severe_v1": false,
+        "severe_reasons": [],
+        "diagnostics": {
+          "loss_plateau_relative_change": 0.01056279807186769,
+          "optimization_steps": [
+            300,
+            300,
+            300
+          ]
+        },
+        "parameters": {
+          "epochs": 75,
+          "inducing_points": 32,
+          "learning_rate": 0.03,
+          "batch_size": 256
+        },
+        "input_sha256": "261e8a8e98ce7372264d3941aa9daafbc50c4232b682473342bf655c3541a825",
+        "severe_warning": false,
+        "quality": 0.48004912278292067
+      },
+      "decision": "exclude",
+      "reason": "Q=0.4800 vs best mds 0.5672; 90% threshold 0.5105; equivalence margin 0.0050; fit runtime 9.58s. Excluded: below threshold, outside the equivalence margin, and made redundant by pca, mds, isomap."
+    },
+    {
+      "method": "tsne",
+      "prior_suitability": "Stochastic local-neighborhood visualization.",
+      "pilot_evidence": {
+        "method": "tsne",
+        "status": "success",
+        "attempts": 8,
+        "successes": 8,
+        "repeats": 3,
+        "subsamples": 5,
+        "trustworthiness": 0.8452157625383828,
+        "neighbor_recall": 0.25453333333333333,
+        "global_structure": 0.5484581506143009,
+        "trustworthiness_k2": 0.8395474526771226,
+        "neighbor_recall_k2": 0.34994,
+        "silhouette": 0.3801532413449575,
+        "collapse_ratio": 0.27860322641390767,
+        "stability": 0.4282729987912903,
+        "stability_global": 0.9532001090155078,
+        "seed_stability": 1.0,
+        "seed_invariant": true,
+        "stability_v1": 1.0,
+        "runtime_seconds": 6.0124835558235645,
+        "runtime_cpu_seconds": 5.974864407333333,
+        "runtime_subsample_seconds": 4.387652086652816,
+        "overhead_seconds": 2.1728725098073483,
+        "peak_memory_mb": 165.109375,
+        "retry_count": 0,
+        "warnings": [],
+        "severe_v1": false,
+        "severe_reasons": [],
+        "diagnostics": {},
+        "parameters": {
+          "perplexity": 30,
+          "learning_rate": "auto",
+          "init": "pca",
+          "max_iter": 750,
+          "n_jobs": 1
+        },
+        "input_sha256": "261e8a8e98ce7372264d3941aa9daafbc50c4232b682473342bf655c3541a825",
+        "severe_warning": false,
+        "quality": 0.5374311135570898
+      },
+      "decision": "retain",
+      "reason": "Q=0.5374 vs best mds 0.5672; 90% threshold 0.5105; equivalence margin 0.0050; fit runtime 6.01s. Retained: meets the 90% threshold."
+    },
+    {
+      "method": "umap",
+      "prior_suitability": "Stochastic neighborhood-graph embedding.",
+      "pilot_evidence": {
+        "method": "umap",
+        "status": "success",
+        "attempts": 8,
+        "successes": 8,
+        "repeats": 3,
+        "subsamples": 5,
+        "trustworthiness": 0.8096009553053566,
+        "neighbor_recall": 0.1932222222222222,
+        "global_structure": 0.5046871878882774,
+        "trustworthiness_k2": 0.8077827654588066,
+        "neighbor_recall_k2": 0.3032733333333333,
+        "silhouette": 0.4348942583215906,
+        "collapse_ratio": 0.14550684689625695,
+        "stability": 0.3202080930765184,
+        "stability_global": 0.9303368604073278,
+        "seed_stability": 0.32148888888888894,
+        "seed_invariant": false,
+        "stability_v1": 0.32148888888888894,
+        "runtime_seconds": 2.0205184652780495,
+        "runtime_cpu_seconds": 2.0096918096666663,
+        "runtime_subsample_seconds": 1.4688701907172799,
+        "overhead_seconds": 23.01494603883475,
+        "peak_memory_mb": 447.8984375,
+        "retry_count": 0,
+        "warnings": [],
+        "severe_v1": false,
+        "severe_reasons": [],
+        "diagnostics": {},
+        "parameters": {
+          "n_neighbors": 15,
+          "min_dist": 0.1,
+          "n_jobs": 1,
+          "n_epochs": 300
+        },
+        "input_sha256": "261e8a8e98ce7372264d3941aa9daafbc50c4232b682473342bf655c3541a825",
+        "severe_warning": false,
+        "quality": 0.4839463590199599
+      },
+      "decision": "exclude",
+      "reason": "Q=0.4839 vs best mds 0.5672; 90% threshold 0.5105; equivalence margin 0.0050; fit runtime 2.02s. Excluded: below threshold, outside the equivalence margin, and made redundant by pca."
+    }
+  ],
+  "sensitivity": {
+    "variants": [
+      {
+        "variant": "primary (pre-registered)",
+        "selected": [
+          "pca",
+          "mds",
+          "tsne"
+        ],
+        "best": "mds"
+      },
+      {
+        "variant": "local metrics only (0.5 T + 0.5 R)",
+        "selected": [
+          "pca",
+          "tsne",
+          "umap",
+          "isomap"
+        ],
+        "best": "tsne"
+      },
+      {
+        "variant": "v1 weights (0.45 T + 0.45 R + 0.10 S)",
+        "selected": [
+          "pca",
+          "tsne",
+          "mds",
+          "umap"
+        ],
+        "best": "tsne"
+      },
+      {
+        "variant": "no stability term",
+        "selected": [
+          "pca",
+          "tsne",
+          "mds",
+          "gplvm"
+        ],
+        "best": "tsne"
+      },
+      {
+        "variant": "global-heavy (0.25/0.25/0.40/0.10)",
+        "selected": [
+          "pca",
+          "mds"
+        ],
+        "best": "mds"
+      },
+      {
+        "variant": "neighborhood k=50",
+        "selected": [
+          "pca",
+          "mds"
+        ],
+        "best": "mds"
+      },
+      {
+        "variant": "seed stability, deterministic=1 (v1 definition)",
+        "selected": [
+          "pca",
+          "tsne",
+          "mds",
+          "isomap"
+        ],
+        "best": "tsne"
+      },
+      {
+        "variant": "v1 severe checks only (no collapse/gap/convergence)",
+        "selected": [
+          "pca",
+          "mds",
+          "tsne"
+        ],
+        "best": "mds"
+      },
+      {
+        "variant": "runtime ignored",
+        "selected": [
+          "pca",
+          "mds",
+          "tsne"
+        ],
+        "best": "mds"
+      },
+      {
+        "variant": "strict Pareto without materiality (v1)",
+        "selected": [
+          "pca",
+          "mds",
+          "tsne"
+        ],
+        "best": "mds"
+      }
+    ],
+    "selection_frequency": {
+      "pca": 1.0,
+      "mds": 0.9,
+      "isomap": 0.2,
+      "gplvm": 0.1,
+      "tsne": 0.8,
+      "umap": 0.2
+    }
+  },
+  "ablation": [
+    {
+      "step": "A0 v1 rules on v2 evidence (fit-only timing)",
+      "selected": [
+        "pca",
+        "tsne",
+        "mds",
+        "isomap"
+      ]
+    },
+    {
+      "step": "A1 + runtime materiality (epsilon-Pareto)",
+      "selected": [
+        "pca",
+        "tsne",
+        "isomap"
+      ]
+    },
+    {
+      "step": "A2 + collapse / spectral-gap / convergence checks",
+      "selected": [
+        "pca",
+        "tsne",
+        "isomap"
+      ]
+    },
+    {
+      "step": "A3 + global-structure component",
+      "selected": [
+        "pca",
+        "tsne",
+        "mds",
+        "isomap"
+      ]
+    },
+    {
+      "step": "A4 + subsample stability replaces seed stability",
+      "selected": [
+        "pca",
+        "mds",
+        "tsne"
+      ]
+    },
+    {
+      "step": "A5 + equivalence-to-best eligibility (= primary)",
+      "selected": [
+        "pca",
+        "mds",
+        "tsne"
+      ]
+    }
+  ]
+}

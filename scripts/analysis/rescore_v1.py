@@ -77,12 +77,23 @@ for name in ["pbmc3k", "pathmnist"]:
          {**v1r, "pareto": "off", "severe_key": "severe_warning"}),
     ]
     shortlists = [{"step": s, "selected": select(rows, cfg, None, ww, rr)["selected"]} for s, ww, rr in steps]
+    # Audit counterfactual: v1 rules on the delivered v1 table, one fast method's runtime moved by +/-0.2 s.
+    jitter = []
+    for mid in ["pca", "kernel_pca", "isomap", "lle", "laplacian"]:
+        for delta in (-0.2, 0.2):
+            moved = [dict(r, runtime_seconds=r["runtime_seconds"] + (delta if r["method"] == mid else 0.0))
+                     for r in rows]
+            jitter.append({"method": mid, "delta_seconds": delta,
+                           "selected": select(moved, cfg, None, v1w, v1r)["selected"]})
     summary[name] = {
         "delivered_v1": delivered,
         "sanity_reproduces_v1": shortlists[0]["selected"] == delivered,
         "max_abs_diff_trust_vs_v1": max(abs(r["trustworthiness"] - r["v1_trust"]) for r in rows),
         "max_abs_diff_recall_vs_v1": max(abs(r["neighbor_recall"] - r["v1_recall"]) for r in rows),
         "steps": shortlists,
+        "runtime_jitter": jitter,
+        "distinct_shortlists_under_jitter": len({tuple(j["selected"]) for j in jitter}
+                                               | {tuple(shortlists[0]["selected"])}),
         "methods": {r["method"]: {key: r[key] for key in (
             "trustworthiness", "neighbor_recall", "global_structure", "neighbor_recall_k2",
             "collapse_ratio", "stability_v1", "seed_stability", "seed_invariant", "severe_reasons")}
@@ -90,7 +101,8 @@ for name in ["pbmc3k", "pathmnist"]:
     }
 target.parent.mkdir(parents=True, exist_ok=True)
 target.write_text(json.dumps(summary, indent=2))
-print(json.dumps({n: {k: v for k, v in s.items() if k != "methods"} for n, s in summary.items()}, indent=2))
+print(json.dumps({n: {k: v for k, v in s.items() if k not in ("methods", "runtime_jitter")}
+                  for n, s in summary.items()}, indent=2))
 for n, s in summary.items():
     print(n)
     for m, r in s["methods"].items():

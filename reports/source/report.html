@@ -1,5 +1,31 @@
 <!doctype html><html><head><meta charset="utf-8"><title>Agent 1 project report</title>
-<style>{{ css|safe }}
+<style>@page { size: A4; margin: 16mm 15mm 16mm 15mm; @bottom-right { content: counter(page); font-size: 7.5pt; color: #898781; } }
+body { font-family: "DejaVu Sans", sans-serif; font-size: 8.6pt; line-height: 1.38; color: #0b0b0b; }
+h1 { font-size: 17pt; line-height: 1.2; margin: 2pt 0 4pt; color: #0b0b0b; }
+h2 { font-size: 11.5pt; margin: 14pt 0 5pt; color: #0b0b0b; border-bottom: 1px solid #e1e0d9; padding-bottom: 2pt; break-after: avoid; }
+h3 { font-size: 9.5pt; margin: 9pt 0 3pt; break-after: avoid; }
+p { margin: 3pt 0 5pt; }
+.kicker { font-size: 7.5pt; letter-spacing: 0.04em; text-transform: uppercase; color: #52514e; margin: 0; }
+.meta { font-size: 7.5pt; color: #52514e; margin: 0 0 6pt; }
+table { border-collapse: collapse; width: 100%; font-size: 7.3pt; margin: 5pt 0 7pt; }
+thead { display: table-header-group; }
+tr { break-inside: avoid; }
+th, td { text-align: left; padding: 2.6pt 4pt; border-bottom: 1px solid #e1e0d9; vertical-align: top; }
+th { background: #f3f2ee; font-weight: bold; color: #0b0b0b; }
+table.kv th { width: 23%; background: none; color: #52514e; font-weight: normal; }
+tr.retained td { background: #eef4fc; }
+figure { margin: 8pt 0 10pt; break-inside: avoid; }
+img { max-width: 100%; max-height: 190mm; }
+img.narrow { max-width: 70%; }
+figcaption { font-size: 7.3pt; color: #52514e; margin-top: 2pt; }
+ul { margin: 3pt 0 6pt 12pt; padding: 0; }
+li { margin: 1.5pt 0; }
+ul.facts li { margin: 2.5pt 0; }
+.small { font-size: 7.2pt; overflow-wrap: anywhere; }
+.notice { padding: 6pt 8pt; background: #f3f2ee; font-size: 7.8pt; }
+.page { break-before: page; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 7pt; }
+
 body { font-size: 8.3pt; line-height: 1.34; }
 h1 { font-size: 14.5pt; margin: 1pt 0 2pt; }
 h2 { font-size: 10pt; margin: 8pt 0 3pt; }
@@ -15,17 +41,17 @@ ul { margin: 2pt 0 4pt 11pt; }
 li { margin: 1pt 0; }
 .ref p { font-size: 7.4pt; text-align: left; margin: 1.5pt 0; }
 </style></head><body>
-{% set P = datasets.pbmc3k %}{% set M = datasets.pathmnist %}{% set N = P.names %}
-{% macro names_of(ms) %}{% for m in ms %}{{ N[m] }}{% if not loop.last %}, {% endif %}{% endfor %}{% endmacro %}
-{% macro final_row(d, m) %}{% for r in d.final if r.method == m %}{{ '%.3f'|format(r.trustworthiness) }} / {{ '%.3f'|format(r.neighbor_recall) }} / {{ '%.3f'|format(r.global_structure) }}{% endfor %}{% endmacro %}
+
+
+
 <header>
 <p class="kicker">BIOS 774 · Agent 1 · project report</p>
 <h1>Choosing dimensionality-reduction methods from evidence, not preference</h1>
-<p class="meta">Y. Gao · evidence frozen {{ frozen.frozen_at[:10] }} (commit {{ (frozen.git_commit or 'none')[:10] }}, {{ '{:,}'.format(frozen.n_files) }} checksummed files) · tables and figures rendered from the frozen artifacts; narrative drafted with AI coding assistance and reviewed by the author</p>
+<p class="meta">Y. Gao · evidence frozen 2026-09-29 (commit 766f1d17e2, 1,751 checksummed files) · tables and figures rendered from the frozen artifacts; narrative drafted with AI coding assistance and reviewed by the author</p>
 </header>
 
 <p class="abstract"><strong>Summary.</strong> Agent 1 is a lightweight, single-orchestrator agent for numerical data. It inspects the data, chooses preprocessing from the inspected profile, and pilots all ten supported dimensionality-reduction methods on one common cohort. Only methods supported by label-free evidence advance.
-On PBMC3k it retained {{ names_of(P.decisions.selected) }} and analysed all {{ '{:,}'.format(P.cohort.selected) }} post-QC cells. On PathMNIST it retained {{ names_of(M.decisions.selected) }} and analysed a stratified subset of {{ '{:,}'.format(M.cohort.selected) }} of the {{ '{:,}'.format(M.cohort.available_post_qc) }} training images; measured scaling set that size.
+On PBMC3k it retained PCA, MDS, t-SNE and analysed all 2,638 post-QC cells. On PathMNIST it retained PCA, MDS, t-SNE, UMAP and analysed a stratified subset of 12,500 of the 89,996 training images; measured scaling set that size.
 A first version (v1) produced plausible reports, but an audit showed that its shortlist was partly decided by import-time noise and by a stability score that was not comparable across methods. The version reported here (v2) corrects the measurements, fixes the decision rules before the real-data run, and reports how robust each decision is.</p>
 
 <h2>1 · Problem and contribution</h2>
@@ -41,14 +67,50 @@ A first version (v1) produced plausible reports, but an audit showed that its sh
 <figure>
 <svg viewBox="0 0 760 118" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="DejaVu Sans" font-size="10">
 <defs><marker id="a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#898781"/></marker></defs>
-{% set boxes = [("Inspect", "profile: sparsity,", "range, integers"), ("Plan", "profile rules →", "preprocessing"), ("Pilot", "10 methods × seeds", "+ 5 subsample refits"), ("Select", "pre-registered Q,", "margins, ε-Pareto"), ("Tune", "shortlist only,", "keep default ± margin"), ("Size", "scaling probe →", "declared cohort"), ("Final + report", "embeddings, PDFs,", "validate, freeze")] %}
-{% for title, l1, l2 in boxes %}{% set x = 4 + loop.index0 * 108 %}
-<rect x="{{ x }}" y="18" width="96" height="62" rx="5" fill="{{ '#eef4fc' if title in ['Pilot', 'Select'] else '#f3f2ee' }}" stroke="{{ '#2a78d6' if title in ['Pilot', 'Select'] else '#c3c2b7' }}"/>
-<text x="{{ x + 48 }}" y="38" text-anchor="middle" font-weight="bold" fill="#0b0b0b">{{ title }}</text>
-<text x="{{ x + 48 }}" y="54" text-anchor="middle" font-size="8" fill="#52514e">{{ l1 }}</text>
-<text x="{{ x + 48 }}" y="66" text-anchor="middle" font-size="8" fill="#52514e">{{ l2 }}</text>
-{% if not loop.last %}<line x1="{{ x + 97 }}" y1="49" x2="{{ x + 107 }}" y2="49" stroke="#898781" stroke-width="1.2" marker-end="url(#a)"/>{% endif %}
-{% endfor %}
+
+
+<rect x="4" y="18" width="96" height="62" rx="5" fill="#f3f2ee" stroke="#c3c2b7"/>
+<text x="52" y="38" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Inspect</text>
+<text x="52" y="54" text-anchor="middle" font-size="8" fill="#52514e">profile: sparsity,</text>
+<text x="52" y="66" text-anchor="middle" font-size="8" fill="#52514e">range, integers</text>
+<line x1="101" y1="49" x2="111" y2="49" stroke="#898781" stroke-width="1.2" marker-end="url(#a)"/>
+
+<rect x="112" y="18" width="96" height="62" rx="5" fill="#f3f2ee" stroke="#c3c2b7"/>
+<text x="160" y="38" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Plan</text>
+<text x="160" y="54" text-anchor="middle" font-size="8" fill="#52514e">profile rules →</text>
+<text x="160" y="66" text-anchor="middle" font-size="8" fill="#52514e">preprocessing</text>
+<line x1="209" y1="49" x2="219" y2="49" stroke="#898781" stroke-width="1.2" marker-end="url(#a)"/>
+
+<rect x="220" y="18" width="96" height="62" rx="5" fill="#eef4fc" stroke="#2a78d6"/>
+<text x="268" y="38" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Pilot</text>
+<text x="268" y="54" text-anchor="middle" font-size="8" fill="#52514e">10 methods × seeds</text>
+<text x="268" y="66" text-anchor="middle" font-size="8" fill="#52514e">+ 5 subsample refits</text>
+<line x1="317" y1="49" x2="327" y2="49" stroke="#898781" stroke-width="1.2" marker-end="url(#a)"/>
+
+<rect x="328" y="18" width="96" height="62" rx="5" fill="#eef4fc" stroke="#2a78d6"/>
+<text x="376" y="38" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Select</text>
+<text x="376" y="54" text-anchor="middle" font-size="8" fill="#52514e">pre-registered Q,</text>
+<text x="376" y="66" text-anchor="middle" font-size="8" fill="#52514e">margins, ε-Pareto</text>
+<line x1="425" y1="49" x2="435" y2="49" stroke="#898781" stroke-width="1.2" marker-end="url(#a)"/>
+
+<rect x="436" y="18" width="96" height="62" rx="5" fill="#f3f2ee" stroke="#c3c2b7"/>
+<text x="484" y="38" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Tune</text>
+<text x="484" y="54" text-anchor="middle" font-size="8" fill="#52514e">shortlist only,</text>
+<text x="484" y="66" text-anchor="middle" font-size="8" fill="#52514e">keep default ± margin</text>
+<line x1="533" y1="49" x2="543" y2="49" stroke="#898781" stroke-width="1.2" marker-end="url(#a)"/>
+
+<rect x="544" y="18" width="96" height="62" rx="5" fill="#f3f2ee" stroke="#c3c2b7"/>
+<text x="592" y="38" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Size</text>
+<text x="592" y="54" text-anchor="middle" font-size="8" fill="#52514e">scaling probe →</text>
+<text x="592" y="66" text-anchor="middle" font-size="8" fill="#52514e">declared cohort</text>
+<line x1="641" y1="49" x2="651" y2="49" stroke="#898781" stroke-width="1.2" marker-end="url(#a)"/>
+
+<rect x="652" y="18" width="96" height="62" rx="5" fill="#f3f2ee" stroke="#c3c2b7"/>
+<text x="700" y="38" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Final + report</text>
+<text x="700" y="54" text-anchor="middle" font-size="8" fill="#52514e">embeddings, PDFs,</text>
+<text x="700" y="66" text-anchor="middle" font-size="8" fill="#52514e">validate, freeze</text>
+
+
 <text x="4" y="10" font-size="8" fill="#52514e">one orchestrator · typed config · checksummed stage manifests · resumable stages</text>
 <text x="4" y="100" font-size="8" fill="#52514e">warm worker per method batch: imports/JIT outside the timer, per-fit timeout and peak memory, crash isolation, cached fits</text>
 <text x="4" y="113" font-size="8" fill="#52514e">validator recomputes every decision, tuning choice and size plan from saved evidence; freeze locks outputs before this report</text>
@@ -59,10 +121,10 @@ A first version (v1) produced plausible reports, but an audit showed that its sh
 
 <h2>3 · Dataset-aware planning and decision logic</h2>
 <table><thead><tr><th>Profile evidence</th><th>PBMC3k</th><th>PathMNIST</th></tr></thead><tbody>
-<tr><td>Source size</td><td>{{ '{:,}'.format(P.profile.n_samples) }} × {{ '{:,}'.format(P.profile.n_features) }}</td><td>{{ '{:,}'.format(M.profile.n_samples) }} × {{ '{:,}'.format(M.profile.n_features) }}</td></tr>
-<tr><td>Sparsity · non-negative · integer · max</td><td>{{ '%.3f'|format(P.profile.statistics.sparsity) }} · {{ P.profile.statistics.nonnegative }} · {{ P.profile.statistics.integer_valued }} · {{ P.profile.statistics.max_value|int }}</td><td>{{ '%.3f'|format(M.profile.statistics.sparsity) }} · {{ M.profile.statistics.nonnegative }} · {{ M.profile.statistics.integer_valued }} · {{ M.profile.statistics.max_value|int }}</td></tr>
+<tr><td>Source size</td><td>2,700 × 32,738</td><td>89,996 × 2,352</td></tr>
+<tr><td>Sparsity · non-negative · integer · max</td><td>0.974 · True · True · 419</td><td>0.000 · True · True · 255</td></tr>
 <tr><td>Branch chosen by rules</td><td><strong>count matrix</strong></td><td><strong>bounded intensity</strong></td></tr>
-<tr><td>Executed steps (per cohort)</td><td>{% for a in P.plan.actions %}{{ a.action|replace('_', ' ') }}{% if not loop.last %} → {% endif %}{% endfor %}</td><td>{% for a in M.plan.actions %}{{ a.action|replace('_', ' ') }}{% if not loop.last %} → {% endif %}{% endfor %}</td></tr>
+<tr><td>Executed steps (per cohort)</td><td>observation qc → sample cohort → filter features → normalize log1p → select highly variable features → scale clip → common pca representation</td><td>sample cohort → scale intensity → common pca representation</td></tr>
 </tbody></table>
 <p><strong>Evidence.</strong> All ten methods receive the identical input: 1,000 observations and the first 50 principal components of the preprocessed features. Stochastic methods run with 3 seeds, and every method is refitted on the same 5 random 80% subsamples. Metrics are label-free and Euclidean in that input space:</p>
 <ul>
@@ -89,38 +151,41 @@ A first version (v1) produced plausible reports, but an audit showed that its sh
 <h2>4 · Results</h2>
 <figure><img src="reports/source/figures/pilot_quality_both.png"><figcaption>Figure 2. Pilot quality of all ten methods on each dataset. Open circles are ineligible because of a severe diagnostic. Full per-method evidence is in generated_report_1.pdf and generated_report_2.pdf.</figcaption></figure>
 <table><thead><tr><th>Dataset</th><th>Shortlist (pilot Q)</th><th>Final cohort</th><th>Final T / R / G of each finalist</th></tr></thead><tbody>
-{% for key, d in [('PBMC3k', P), ('PathMNIST', M)] %}<tr><td>{{ key }}</td>
-<td>{% for m in d.decisions.selected %}{% for r in d.pilot if r.method == m %}{{ N[m] }} {{ '%.3f'|format(r.quality) }}{% endfor %}{% if not loop.last %}; {% endif %}{% endfor %}</td>
-<td>{{ '{:,}'.format(d.cohort.selected) }} ({{ d.size_plan.binding_constraint }})</td>
-<td>{% for m in d.decisions.selected %}{{ N[m] }} {{ final_row(d, m) }}{% if not loop.last %}; {% endif %}{% endfor %}</td></tr>{% endfor %}
+<tr><td>PBMC3k</td>
+<td>PCA 0.493; MDS 0.567; t-SNE 0.537</td>
+<td>2,638 (all available observations)</td>
+<td>PCA 0.825 / 0.051 / 0.808; MDS 0.848 / 0.064 / 0.842; t-SNE 0.897 / 0.208 / 0.654</td></tr><tr><td>PathMNIST</td>
+<td>PCA 0.635; MDS 0.666; t-SNE 0.653; UMAP 0.621</td>
+<td>12,500 (per-run timeout, final-stage time budget, memory budget at n=15000)</td>
+<td>PCA 0.843 / 0.071 / 0.858; MDS 0.850 / 0.073 / 0.955; t-SNE 0.900 / 0.186 / 0.780; UMAP 0.861 / 0.099 / 0.831</td></tr>
 </tbody></table>
-{% set Pt = (P.final|selectattr('method', 'equalto', 'tsne')|list)[0] %}{% set Pm = (P.final|selectattr('method', 'equalto', 'mds')|list)[0] %}
-{% set Mt = (M.final|selectattr('method', 'equalto', 'tsne')|list)[0] %}{% set Mm = (M.final|selectattr('method', 'equalto', 'mds')|list)[0] %}
+
+
 <p><strong>What the evidence says.</strong> On both datasets the agent kept one method strong on global structure (MDS) and one strong on local structure (t-SNE), next to the PCA baseline.</p>
-{% set Pmd = (P.pilot|selectattr('method', 'equalto', 'mds')|list)[0] %}{% set Mmd = (M.pilot|selectattr('method', 'equalto', 'mds')|list)[0] %}{% set Pts = (P.pilot|selectattr('method', 'equalto', 'tsne')|list)[0] %}{% set Mts = (M.pilot|selectattr('method', 'equalto', 'tsne')|list)[0] %}
-<p>MDS had the best pilot Q on both datasets. Two components drove it: the highest global structure of all valid methods (G {{ '%.3f'|format(Pmd.global_structure) }} on PBMC3k, {{ '%.3f'|format(Mmd.global_structure) }} on PathMNIST) and higher subsample stability than t-SNE (S {{ '%.3f'|format(Pmd.stability) }} vs {{ '%.3f'|format(Pts.stability) }}; {{ '%.3f'|format(Mmd.stability) }} vs {{ '%.3f'|format(Mts.stability) }}). Together they outweighed t-SNE's better local recall. t-SNE preserved local neighborhoods best: on the final cohorts its recall was {{ '%.3f'|format(Pt.neighbor_recall) }} vs {{ '%.3f'|format(Pm.neighbor_recall) }} for MDS on PBMC3k, and {{ '%.3f'|format(Mt.neighbor_recall) }} vs {{ '%.3f'|format(Mm.neighbor_recall) }} on PathMNIST. Its global correlation was lower ({{ '%.3f'|format(Pt.global_structure) }} and {{ '%.3f'|format(Mt.global_structure) }}).</p>
-<p>UMAP advanced on PathMNIST but not on PBMC3k, where its Q ({{ '%.3f'|format((P.pilot|selectattr('method', 'equalto', 'umap')|list)[0].quality) }}) was below both the 90% threshold and PCA. Diffusion maps on PBMC3k were ineligible: their layout collapsed and the diffusion graph was nearly disconnected (Markov gap {{ '%.0e'|format((P.pilot|selectattr('method', 'equalto', 'diffusion_maps')|list)[0].diagnostics.min_markov_spectral_gap) }}).</p>
-{% set proj = (M.size_plan.projections|selectattr('n', 'equalto', M.cohort.selected)|list)[0].per_method.mds.seconds %}
-<p>The PathMNIST final size was bounded by MDS. Its fitted time exponent was {{ '%.2f'|format(M.size_plan.scaling_model.mds.time_exponent) }}, so 15,000 images would have exceeded the budgets. The size rule needed its safety factor: MDS took {{ '%.0f'|format(Mm.runtime_seconds) }} s at n = {{ '{:,}'.format(M.cohort.selected) }}, against a point projection of {{ '%.0f'|format(proj) }} s ({{ '%.0f'|format(M.cfg.final.safety_factor * proj) }} s with the 2× safety factor). A likely cause is the cubic eigendecomposition inside the classical start, which grows faster than the probes (at most 4,000 observations) could show; this was not timed separately.</p>
-<p>The secondary label silhouettes support the same division of labor on PBMC3k (t-SNE highest). On PathMNIST {% if M.final|selectattr('silhouette', 'lt', 0)|list|length == M.final|length %}they are negative for every finalist: pixel distances do not separate the tissue classes{% else %}they remain low{% endif %}, a limitation of the pixel representation rather than of any one method.</p>
+
+<p>MDS had the best pilot Q on both datasets. Two components drove it: the highest global structure of all valid methods (G 0.855 on PBMC3k, 0.949 on PathMNIST) and higher subsample stability than t-SNE (S 0.756 vs 0.428; 0.813 vs 0.598). Together they outweighed t-SNE's better local recall. t-SNE preserved local neighborhoods best: on the final cohorts its recall was 0.208 vs 0.064 for MDS on PBMC3k, and 0.186 vs 0.073 on PathMNIST. Its global correlation was lower (0.654 and 0.780).</p>
+<p>UMAP advanced on PathMNIST but not on PBMC3k, where its Q (0.484) was below both the 90% threshold and PCA. Diffusion maps on PBMC3k were ineligible: their layout collapsed and the diffusion graph was nearly disconnected (Markov gap 9e-08).</p>
+
+<p>The PathMNIST final size was bounded by MDS. Its fitted time exponent was 2.30, so 15,000 images would have exceeded the budgets. The size rule needed its safety factor: MDS took 1038 s at n = 12,500, against a point projection of 757 s (1515 s with the 2× safety factor). A likely cause is the cubic eigendecomposition inside the classical start, which grows faster than the probes (at most 4,000 observations) could show; this was not timed separately.</p>
+<p>The secondary label silhouettes support the same division of labor on PBMC3k (t-SNE highest). On PathMNIST they are negative for every finalist: pixel distances do not separate the tissue classes, a limitation of the pixel representation rather than of any one method.</p>
 <figure><img src="reports/source/figures/final_embeddings_both.png" style="max-height: 118mm"><figcaption>Figure 3. Final embeddings of the two nonlinear finalists common to both datasets. Class names sit at class medians. Colors are secondary annotations, and visual separation is not evidence of biological or histological truth.</figcaption></figure>
 
 <h2>5 · Robustness and reflection</h2>
 <table><thead><tr><th>Cumulative change (same v2 evidence)</th><th>PBMC3k shortlist</th><th>PathMNIST shortlist</th></tr></thead><tbody>
-{% for a in P.decisions.ablation %}<tr><td>{{ a.step }}</td><td>{{ names_of(a.selected) }}</td><td>{{ names_of(M.decisions.ablation[loop.index0].selected) }}</td></tr>{% endfor %}
+<tr><td>A0 v1 rules on v2 evidence (fit-only timing)</td><td>PCA, t-SNE, MDS, Isomap</td><td>PCA, t-SNE, MDS</td></tr><tr><td>A1 + runtime materiality (epsilon-Pareto)</td><td>PCA, t-SNE, Isomap</td><td>PCA, t-SNE, MDS</td></tr><tr><td>A2 + collapse / spectral-gap / convergence checks</td><td>PCA, t-SNE, Isomap</td><td>PCA, t-SNE, MDS</td></tr><tr><td>A3 + global-structure component</td><td>PCA, t-SNE, MDS, Isomap</td><td>PCA, t-SNE, MDS, Isomap</td></tr><tr><td>A4 + subsample stability replaces seed stability</td><td>PCA, MDS, t-SNE</td><td>PCA, MDS, t-SNE, UMAP</td></tr><tr><td>A5 + equivalence-to-best eligibility (= primary)</td><td>PCA, MDS, t-SNE</td><td>PCA, MDS, t-SNE, UMAP</td></tr>
 </tbody></table>
 <p><strong>How stable are the decisions?</strong> Across ten rule variants (other weightings, k = 50, the v1 stability definition, ignoring runtime, and others), these are the selection frequencies:</p>
 <ul>
-<li>PBMC3k: {% for m, f in P.decisions.sensitivity.selection_frequency.items() %}{{ N[m] }} {{ (100 * f)|round|int }}%{% if not loop.last %}, {% endif %}{% endfor %}.</li>
-<li>PathMNIST: {% for m, f in M.decisions.sensitivity.selection_frequency.items() %}{{ N[m] }} {{ (100 * f)|round|int }}%{% if not loop.last %}, {% endif %}{% endfor %}.</li>
+<li>PBMC3k: PCA 100%, MDS 90%, Isomap 20%, GPLVM 10%, t-SNE 80%, UMAP 20%.</li>
+<li>PathMNIST: PCA 100%, Kernel PCA 10%, MDS 100%, Isomap 10%, t-SNE 100%, UMAP 80%.</li>
 </ul>
 <p>PCA, MDS and t-SNE are therefore robust conclusions. UMAP's place on PathMNIST is moderately robust; any fourth method on PBMC3k would be fragile, and the agent kept none. The ablation shows which rule mattered: moving from v1's stability definition to subsample stability replaced Isomap by MDS on PBMC3k and by UMAP on PathMNIST.</p>
 <p><strong>What v1 got wrong, and what I learned.</strong></p>
 <ul>
-<li><strong>Measure before you decide.</strong> {% set Ppc = (P.pilot|selectattr('method', 'equalto', 'pca')|list)[0] %}v1's runtimes were dominated by Python imports. v2 measures PCA's pilot fit at {{ '%.3f'|format(Ppc.runtime_seconds) }} s, while v1 recorded 1.81 s on PBMC3k (examples/v1). A strict Pareto rule then treated sub-second noise as evidence: two v1 runs on the same input, with identical qualities, retained different fourth methods. Perturbing one runtime by ±0.2 s gave six different PathMNIST shortlists.</li>
+<li><strong>Measure before you decide.</strong> v1's runtimes were dominated by Python imports. v2 measures PCA's pilot fit at 0.004 s, while v1 recorded 1.81 s on PBMC3k (examples/v1). A strict Pareto rule then treated sub-second noise as evidence: two v1 runs on the same input, with identical qualities, retained different fourth methods. Perturbing one runtime by ±0.2 s gave six different PathMNIST shortlists.</li>
 <li><strong>A shared metric must mean the same thing for every method.</strong> t-SNE with PCA initialization ignores its seed. v1's "seed stability" therefore gave it a measured 1.0, the same score deterministic methods received by definition, while UMAP, MDS and GPLVM were penalized.</li>
-<li><strong>The pilot configuration is part of the evidence.</strong> MDS started from random positions stopped at its iteration limit on PBMC3k and looked weak. Started from the classical solution, it converges ({{ (P.pilot|selectattr('method', 'equalto', 'mds')|list)[0].diagnostics.smacof_iterations|max }} SMACOF iterations on the PBMC3k pilot, limit 1,000) and is the best method on both datasets. An evidence-based agent is only as fair as the candidates' default settings.</li>
-<li><strong>Diagnostics are necessary but incomplete.</strong> The collapse check, calibrated on simulations before the real-data run, caught the collapsed diffusion maps on PBMC3k. {% set Mll = (M.pilot|selectattr('method', 'equalto', 'lle')|list)[0] %}{% set Mlp = (M.pilot|selectattr('method', 'equalto', 'laplacian')|list)[0] %}Visually degenerate LLE and Laplacian layouts on PathMNIST have collapse ratios of {{ '%.3f'|format(Mll.collapse_ratio) }} and {{ '%.3f'|format(Mlp.collapse_ratio) }}, just above the 0.05 threshold. They were excluded only because their Q was lower.</li>
+<li><strong>The pilot configuration is part of the evidence.</strong> MDS started from random positions stopped at its iteration limit on PBMC3k and looked weak. Started from the classical solution, it converges (179 SMACOF iterations on the PBMC3k pilot, limit 1,000) and is the best method on both datasets. An evidence-based agent is only as fair as the candidates' default settings.</li>
+<li><strong>Diagnostics are necessary but incomplete.</strong> The collapse check, calibrated on simulations before the real-data run, caught the collapsed diffusion maps on PBMC3k. Visually degenerate LLE and Laplacian layouts on PathMNIST have collapse ratios of 0.076 and 0.082, just above the 0.05 threshold. They were excluded only because their Q was lower.</li>
 </ul>
 
 <h2>6 · Strengths, limitations and reproducibility</h2>
@@ -144,7 +209,7 @@ A first version (v1) produced plausible reports, but an audit showed that its sh
 <li>The exact environment is given by explicit conda and pip locks.</li>
 <li>Every stage records configuration and code hashes, the git commit, host and job.</li>
 <li>Cohort IDs, seeds and checksums are saved.</li>
-<li><code>freeze</code> locked the {{ '{:,}'.format(frozen.n_files) }} output files before this report was rendered.</li>
+<li><code>freeze</code> locked the 1,751 output files before this report was rendered.</li>
 <li>Rerun with <code>sbatch scripts/slurm/run_all.sbatch config/&lt;dataset&gt;.yaml</code>.</li>
 </ul>
 

@@ -25,7 +25,7 @@ Read-only audit of v1. Findings (details in `docs/METHOD_NOTES.md`, "Why v2"):
 Changes, each validated separately:
 1. **Metrics** (evaluation.py): chunked shared reference neighborhoods; T identical to scikit-learn and R identical to v1 (difference 0, tested); new global structure G, subsample stability S and collapse ratio. Simulation checks passed before any real-data use.
 2. **Offline re-scoring of the v1 embeddings** (scripts/analysis/rescore_v1.py → examples/v1/offline_rescore.json): reproduces both delivered v1 shortlists exactly, then isolates each rule's effect.
-3. **Profile-driven planner** (planner.py): bit-identical pilot inputs, IDs and labels versus v1 for both datasets, verified with a v1 worktree on one node (srun job 2831...; recorded in this session).
+3. **Profile-driven planner** (planner.py): bit-identical pilot inputs, IDs and labels versus v1 for both datasets, verified with a v1 worktree on one node.
 4. **Warm batch worker** with fit-only timing, per-fit peak RSS, per-fit timeouts and crash isolation (worker.py, execution.py).
 5. **Method fixes**: MDS classical initialization with a convergence flag; GPLVM true epochs (75 = v1's 300 steps at n = 1,000); diffusion Markov gap and Laplacian spectrum diagnostics; the README's full UMAP grid; LLE reg option.
 6. **Pre-registered selection** (selector.py): equivalence margins, ε-Pareto, severe diagnostics, sensitivity and ablation. Tuning keeps the default unless the gain exceeds the margin. Final size comes from a scaling probe (final.py).
@@ -33,4 +33,30 @@ Changes, each validated separately:
 8. **Tests**: 49 passing (26 fast + 23 slow; job 2834689 for the slow set); ruff clean.
 9. **Cleanup**: v1 outputs, reports and logs moved to `archive/v1` folders; caches removed (the tree went from 768 MB to 359 MB).
 
-## v2 production (pending)
+## v2 production (2026-09-28/29, commit 766f1d1, partition `interact`)
+- PBMC3k: job 2836846 on c0316, 15 min 43 s. PathMNIST: job 2836847 on c0402, 38 min 47 s. The two ran in parallel with 1 CPU and 32 GB each. Both passed the dataset validator (26 checks each).
+- **PBMC3k**:
+  - Branch: count matrix.
+  - Shortlist: PCA, MDS, t-SNE. MDS had the best pilot quality.
+  - Final cohort: all 2,638 post-QC cells.
+  - Final T/R/G: PCA 0.825/0.051/0.808; MDS 0.848/0.064/0.842; t-SNE 0.897/0.208/0.654.
+  - Diffusion maps ineligible: collapsed layout, Markov gap 9e-8.
+- **PathMNIST**:
+  - Branch: bounded intensity.
+  - Shortlist: PCA, MDS, t-SNE, UMAP.
+  - Final cohort: 12,500 of 89,996 training images, declared by the scaling rule. MDS was the binding method; at 15,000 it would exceed the timeout, time budget and memory limit.
+  - The final MDS fit took 1,038 s against a point projection of 757 s; the 2x safety factor absorbed the difference.
+  - Final T/R/G: MDS 0.850/0.073/0.955; t-SNE 0.900/0.186/0.780.
+  - All label silhouettes are negative.
+- Tuning kept every default. PathMNIST t-SNE perplexity 50 gained 0.0028, within the 0.005 margin.
+- Robustness across 10 rule variants: PCA, MDS and t-SNE are retained in at least 80% on both datasets. UMAP is retained in 80% on PathMNIST and 20% on PBMC3k.
+- Only the report template changed after the runs (dataset title and QC wording), so no analysis stage needed recomputing.
+- **Frozen** 2026-09-29T02:05:21 UTC: 1,751 files checksummed in `outputs/FROZEN_MANIFEST.json`; outputs and both dataset PDFs set read-only.
+- `reports/report.pdf` (4 main-body pages + references/appendix) was rendered from the verified frozen evidence. `submission_manifest.json` was refreshed.
+- The v1 audit counterfactuals are saved in `examples/v1/offline_rescore.json`, including the six PathMNIST shortlists produced by ±0.2 s runtime jitter.
+
+## Handoff notes
+- The project-report narrative is `templates/project_report.html.j2`; its numbers are template variables read from the frozen evidence. Edit the template or CSS and re-run `python -m agent1_dr project-report` on a compute node. Editing any `src/` file changes the code hash and makes the frozen stages fail validation.
+- Deferred on purpose so the frozen evidence would not need recomputing: larger fonts in the pilot metric panel, and splitting the provenance hash into analysis and report layers (staged, not applied).
+- The author line ("Y. Gao") and the AI-assistance sentence in the report header need the author's confirmation.
+- Git: branch `v2-evidence-selection` (baseline c9e180b, v2 766f1d1, deliverables commit next). `main` has no commits. Nothing has been pushed; no license has been selected.

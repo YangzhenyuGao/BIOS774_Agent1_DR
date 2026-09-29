@@ -1,0 +1,172 @@
+{
+  "configured_cap": 3000,
+  "available_observations": 2638,
+  "pilot_samples": 1000,
+  "probe_sizes": [
+    500,
+    1000,
+    2000
+  ],
+  "probe": [
+    {
+      "method": "pca",
+      "n": 500,
+      "status": "success",
+      "seconds": 0.003965681418776512,
+      "peak_memory_mb": 153.5625
+    },
+    {
+      "method": "pca",
+      "n": 1000,
+      "status": "success",
+      "seconds": 0.004772608168423176,
+      "peak_memory_mb": 154.62890625
+    },
+    {
+      "method": "pca",
+      "n": 2000,
+      "status": "success",
+      "seconds": 0.008406541310250759,
+      "peak_memory_mb": 156.91796875
+    },
+    {
+      "method": "mds",
+      "n": 500,
+      "status": "success",
+      "seconds": 0.6697365697473288,
+      "peak_memory_mb": 169.77734375
+    },
+    {
+      "method": "mds",
+      "n": 1000,
+      "status": "success",
+      "seconds": 4.398017103783786,
+      "peak_memory_mb": 212.765625
+    },
+    {
+      "method": "mds",
+      "n": 2000,
+      "status": "success",
+      "seconds": 13.88027654401958,
+      "peak_memory_mb": 382.51953125
+    },
+    {
+      "method": "tsne",
+      "n": 500,
+      "status": "success",
+      "seconds": 2.561969264410436,
+      "peak_memory_mb": 160.12890625
+    },
+    {
+      "method": "tsne",
+      "n": 1000,
+      "status": "success",
+      "seconds": 6.087690363638103,
+      "peak_memory_mb": 163.8828125
+    },
+    {
+      "method": "tsne",
+      "n": 2000,
+      "status": "success",
+      "seconds": 10.876692646183074,
+      "peak_memory_mb": 170.609375
+    }
+  ],
+  "scaling_model": {
+    "mds": {
+      "time_exponent": 1.658111191848357,
+      "memory_exponent": 2.3070908180024245,
+      "anchor_n": 2000,
+      "anchor_seconds": 13.88027654401958,
+      "anchor_memory_mb": 382.51953125,
+      "baseline_memory_mb": 169.77734375
+    },
+    "pca": {
+      "time_exponent": 0.8167344610008785,
+      "memory_exponent": 1.6537571802186102,
+      "anchor_n": 2000,
+      "anchor_seconds": 0.008406541310250759,
+      "anchor_memory_mb": 156.91796875,
+      "baseline_memory_mb": 153.5625
+    },
+    "tsne": {
+      "time_exponent": 0.8372730462042244,
+      "memory_exponent": 1.481238718486769,
+      "anchor_n": 2000,
+      "anchor_seconds": 10.876692646183074,
+      "anchor_memory_mb": 170.609375,
+      "baseline_memory_mb": 160.12890625
+    }
+  },
+  "projections": [
+    {
+      "n": 1000,
+      "per_method": {
+        "mds": {
+          "seconds": 4.398017103783791,
+          "memory_mb": 212.76562500000006
+        },
+        "pca": {
+          "seconds": 0.0042032706551253796,
+          "memory_mb": 154.62890625
+        },
+        "tsne": {
+          "seconds": 5.438346323091537,
+          "memory_mb": 163.8828125
+        }
+      },
+      "max_fit_seconds_with_safety": 10.876692646183074,
+      "total_seconds_with_safety": 19.681133395060904,
+      "max_memory_mb_with_safety": 425.5312500000001,
+      "feasible": true,
+      "violations": []
+    },
+    {
+      "n": 2000,
+      "per_method": {
+        "mds": {
+          "seconds": 13.88027654401958,
+          "memory_mb": 382.51953125
+        },
+        "pca": {
+          "seconds": 0.008406541310250759,
+          "memory_mb": 156.91796875
+        },
+        "tsne": {
+          "seconds": 10.876692646183074,
+          "memory_mb": 170.609375
+        }
+      },
+      "max_fit_seconds_with_safety": 27.76055308803916,
+      "total_seconds_with_safety": 49.53075146302581,
+      "max_memory_mb_with_safety": 765.0390625,
+      "feasible": true,
+      "violations": []
+    },
+    {
+      "n": 2638,
+      "per_method": {
+        "mds": {
+          "seconds": 21.96733434774348,
+          "memory_mb": 572.7441601488217
+        },
+        "pca": {
+          "seconds": 0.011088227988220751,
+          "memory_mb": 158.86656567095764
+        },
+        "tsne": {
+          "seconds": 14.346357600315473,
+          "memory_mb": 175.92289972367786
+        }
+      },
+      "max_fit_seconds_with_safety": 43.93466869548696,
+      "total_seconds_with_safety": 72.64956035209435,
+      "max_memory_mb_with_safety": 1145.4883202976434,
+      "feasible": true,
+      "violations": []
+    }
+  ],
+  "declared_final_size": 2638,
+  "binding_constraint": "all available observations",
+  "rule": "largest ladder size with safety 2x projected cost within the per-run timeout (30 min), the final-stage budget (40 min) and memory (24 GB); exponents below 1 are raised to 1"
+}

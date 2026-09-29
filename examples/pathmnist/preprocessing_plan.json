@@ -1,0 +1,93 @@
+{
+  "actions": [
+    {
+      "action": "sample_cohort",
+      "parameters": {
+        "size": 1000,
+        "seed": 774,
+        "stratified": true
+      },
+      "reason": "Common representative cohort; labels, when present, only preserve class proportions",
+      "fit_scope": "cohort design"
+    },
+    {
+      "action": "scale_intensity",
+      "parameters": {
+        "divisor": 255
+      },
+      "reason": "Dense (sparsity 0.000) non-negative integers in [0, 255] behave as 8-bit intensities on one known scale: divide by 255 without per-feature standardization, preserving the pixel-space question",
+      "fit_scope": "fixed constant"
+    },
+    {
+      "action": "common_pca_representation",
+      "parameters": {
+        "n_components": 50,
+        "explained_variance_ratio": [
+          0.5399255426381238,
+          0.022801239717135616,
+          0.019480270405979896,
+          0.01751649909412842,
+          0.01572026801431629,
+          0.013647365628057077,
+          0.011684139279181924,
+          0.010301376995841533,
+          0.008602632370949189,
+          0.008434837727581931,
+          0.008294857866254836,
+          0.00704802707702264,
+          0.006740166925623913,
+          0.006530995370598548,
+          0.006154190364805384,
+          0.005456894594335079,
+          0.0051443827280859625,
+          0.0045693604173426185,
+          0.0044221494673955045,
+          0.004275589182192927,
+          0.00398194878109752,
+          0.00384376048028086,
+          0.0037113145574191398,
+          0.003559073325399053,
+          0.003423877649365901,
+          0.0033893043706061405,
+          0.0032887854590557524,
+          0.003216929461049445,
+          0.0030765740903271,
+          0.0030469310836274723,
+          0.0029527159251238368,
+          0.0028846119244177377,
+          0.00283632664733467,
+          0.0027434762812173293,
+          0.0027062834409225956,
+          0.0026082488845508038,
+          0.002538633183960932,
+          0.0025304666549748715,
+          0.0024443313718084743,
+          0.0023998593088975224,
+          0.00235900400714062,
+          0.0023194416445077985,
+          0.002297906642739961,
+          0.0022181274432264203,
+          0.002150454490431158,
+          0.0021156044169376043,
+          0.0020689159264806055,
+          0.002010804567035687,
+          0.0019858358906593874,
+          0.001972107494928366
+        ]
+      },
+      "reason": "Common denoising and computational input for all ten methods; the displayed PCA is two-dimensional",
+      "fit_scope": "analysis cohort only"
+    }
+  ],
+  "labels_used_for_fit": false,
+  "branch": "bounded_intensity",
+  "rule_evidence": {
+    "sparsity": 0.00014701144691842138,
+    "nonnegative": true,
+    "integer_valued": true,
+    "min_value": 0.0,
+    "max_value": 255.0,
+    "n_features": 2352,
+    "mitochondrial_features": 0
+  }
+}
